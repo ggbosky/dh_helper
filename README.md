@@ -14,6 +14,19 @@ Hlavní instrukce (system prompt, brand, tone of voice) jsou v [`CLAUDE.md`](CLA
 | `/post` | Carousel / single post + caption | `/post 5 největších přestupů extraligy, 7 slajdů` |
 | `/napady` | Virální nápady na videa | `/napady NHL zákulisí, 10` |
 
+## Live preview a export grafiky
+
+- `studio/index.html` – live preview všech modulů (otevři v prohlížeči).
+- Export slajdů do PNG v plném rozlišení:
+
+  ```bash
+  npm install        # jen poprvé
+  npm run render     # ukázka Nagano 1998 → output/posty/2026-10-15-nagano-1998/
+  node tools/render.mjs studio/<post>.html output/posty/<slozka>
+  ```
+
+Formáty: Instagram a Facebook 1080 × 1350, TikTok 1080 × 1920, YouTube 1280 × 720.
+
 ## Jak naučit engine váš styl
 
 Nahrajte podklady do složek – engine je čte před každým výstupem:

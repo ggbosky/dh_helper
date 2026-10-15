@@ -1,6 +1,6 @@
 # Carousel / Post – [TÉMA]
 
-**Formát:** carousel 1080×1350 (4:5) / single post 1080×1350
+**Formát:** Instagram + Facebook 1080×1350 (4:5) · TikTok 1080×1920 (9:16)
 **Počet slajdů:** …
 
 | # | Role | Titulek (verzálky) | Text (max ~25 slov) | Vizuál |

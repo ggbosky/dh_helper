@@ -1,0 +1,179 @@
+/*
+  Deník Hokeje – slide system
+  Všechny rozměry uvnitř .slide jsou v cqw (100cqw = šířka slajdu),
+  takže stejný slajd se dá zobrazit v náhledu i exportovat v plném rozlišení.
+  Formáty: .slide--ig 1080×1350 (Instagram, Facebook), .slide--tt 1080×1920 (TikTok),
+           .slide--yt 1280×720 (YouTube thumbnail)
+*/
+@import url("fonts.css");
+
+:root {
+  --dh-black: #0A0A0C;
+  --dh-navy: #0B1A2E;
+  --dh-ice: #F2F6FA;
+  --dh-ice-dim: #A9B6C6;
+  --dh-red: #A41E1E;
+  --dh-bordo: #870709;
+  --dh-signal: #E10600;
+  --dh-neon: #F5E400;
+  --dh-blueline: #1D4ED8;
+  --dh-display: "Bebas Neue", "Barlow Condensed", Impact, "Arial Narrow", sans-serif;
+  --dh-cond: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --dh-body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+}
+
+.slide {
+  --accent: var(--dh-signal);
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--dh-ice);
+  background: var(--dh-black);
+  font-family: var(--dh-body);
+  isolation: isolate;
+}
+.slide--ig { aspect-ratio: 1080 / 1350; }
+.slide--tt { aspect-ratio: 1080 / 1920; }
+.slide--yt { aspect-ratio: 1280 / 720; }
+.slide.accent-neon { --accent: var(--dh-neon); }
+
+/* Plocha ledu: noční modrá, světlo arény shora, stopy po bruslích */
+.slide .ice {
+  position: absolute; inset: 0; z-index: -2;
+  background:
+    radial-gradient(120% 60% at 50% -10%, rgba(140, 170, 205, .22), transparent 60%),
+    repeating-linear-gradient(17deg, rgba(242, 246, 250, .028) 0 1px, transparent 1px 2.6cqw),
+    repeating-linear-gradient(-23deg, rgba(242, 246, 250, .02) 0 1px, transparent 1px 3.9cqw),
+    linear-gradient(180deg, var(--dh-navy) 0%, var(--dh-black) 78%);
+}
+/* Kruh pro vhazování jako podkladová grafika */
+.slide .faceoff {
+  position: absolute; z-index: -1;
+  width: 92cqw; aspect-ratio: 1; border-radius: 50%;
+  border: .55cqw solid rgba(164, 30, 30, .32);
+  right: -38cqw; bottom: -20cqw;
+}
+.slide .faceoff::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 4.2cqw; aspect-ratio: 1; border-radius: 50%;
+  background: rgba(164, 30, 30, .45); transform: translate(-50%, -50%);
+}
+/* Červená a modrá čára jako dělicí prvky */
+.slide .redline { height: .9cqw; background: var(--dh-red); width: 100%; }
+.slide .blueline { height: .9cqw; background: var(--dh-blueline); width: 18cqw; }
+
+.slide .inner {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  padding: 6.5cqw 7cqw 6cqw;
+  gap: 3.2cqw;
+}
+.slide--tt .inner { padding: 14cqw 7cqw 40cqw 7cqw; padding-right: 13cqw; }
+
+/* Hlavička slajdu: logo + značka + číslo slajdu */
+.slide .masthead { display: flex; align-items: center; gap: 2.2cqw; }
+.slide .masthead img { width: 9cqw; height: 9cqw; border-radius: 50%; box-shadow: 0 0 0 .3cqw rgba(242,246,250,.85), 0 .8cqw 2.4cqw rgba(0,0,0,.6); }
+.slide .masthead .brand { font-family: var(--dh-cond); font-weight: 800; font-size: 3.6cqw; letter-spacing: .14em; text-transform: uppercase; }
+.slide .masthead .count { margin-left: auto; font-family: var(--dh-cond); font-weight: 600; font-size: 3.2cqw; letter-spacing: .08em; color: var(--dh-ice-dim); font-variant-numeric: tabular-nums; }
+
+.slide .tag {
+  align-self: flex-start;
+  font-family: var(--dh-cond); font-weight: 800; text-transform: uppercase;
+  font-size: 3.4cqw; letter-spacing: .1em; line-height: 1;
+  padding: 1.3cqw 2.2cqw 1.1cqw; background: var(--accent); color: var(--dh-black);
+}
+.slide.accent-red .tag, .slide:not(.accent-neon) .tag { color: var(--dh-ice); }
+
+.slide .headline {
+  font-family: var(--dh-display); font-weight: 400;
+  font-size: 17cqw; line-height: .86; letter-spacing: .005em;
+  text-transform: uppercase; margin: 0; text-wrap: balance;
+}
+.slide .headline .hl { color: var(--accent); }
+.slide .headline.md { font-size: 13cqw; }
+.slide .headline.sm { font-size: 10.5cqw; }
+
+.slide .lede { font-size: 4.6cqw; line-height: 1.32; font-weight: 500; margin: 0; max-width: 82cqw; }
+.slide .lede b { font-weight: 600; color: var(--accent); }
+.slide .body { font-size: 4cqw; line-height: 1.4; color: var(--dh-ice-dim); margin: 0; max-width: 82cqw; }
+.slide .body b { color: var(--dh-ice); font-weight: 600; }
+
+.slide .spacer { flex: 1; }
+.slide .footer {
+  display: flex; align-items: center; justify-content: space-between; gap: 2cqw;
+  font-family: var(--dh-cond); font-weight: 600; text-transform: uppercase;
+  font-size: 3cqw; letter-spacing: .12em; color: var(--dh-ice-dim);
+}
+.slide .footer .swipe { color: var(--dh-ice); font-weight: 800; }
+
+/* Velká čísla */
+.slide .stats { display: grid; gap: 3.4cqw; }
+.slide .stat { display: grid; grid-template-columns: 44cqw 1fr; align-items: end; gap: 3cqw; border-bottom: .3cqw solid rgba(242,246,250,.14); padding-bottom: 2.4cqw; }
+.slide .stat .num { font-family: var(--dh-display); font-size: 20cqw; line-height: .8; font-variant-numeric: tabular-nums; }
+.slide .stat .num.hl { color: var(--accent); }
+.slide .stat .lbl { font-family: var(--dh-cond); font-weight: 600; font-size: 4.4cqw; line-height: 1.1; text-transform: uppercase; letter-spacing: .04em; padding-bottom: 1.2cqw; }
+
+/* Časová osa zápasu */
+.slide .timeline { display: grid; gap: 2.6cqw; }
+.slide .tl-row { display: grid; grid-template-columns: 20cqw 1fr; gap: 3cqw; align-items: baseline; }
+.slide .tl-row .t { font-family: var(--dh-display); font-size: 9cqw; line-height: 1; font-variant-numeric: tabular-nums; color: var(--dh-ice-dim); }
+.slide .tl-row .e { font-size: 4.2cqw; line-height: 1.3; font-weight: 500; }
+.slide .tl-row .e b { font-family: var(--dh-cond); font-weight: 800; text-transform: uppercase; letter-spacing: .03em; font-size: 4.8cqw; }
+.slide .tl-row.key .t { color: var(--accent); }
+
+/* Rozstřel */
+.slide .shootout { display: grid; gap: 2cqw; }
+.slide .so-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2cqw; padding: 1.8cqw 0; border-bottom: .3cqw solid rgba(242,246,250,.12); }
+.slide .so-row .who { font-family: var(--dh-cond); font-weight: 800; font-size: 5.6cqw; text-transform: uppercase; letter-spacing: .02em; }
+.slide .so-row .who small { font-family: var(--dh-body); font-weight: 500; font-size: 3.4cqw; text-transform: none; letter-spacing: 0; color: var(--dh-ice-dim); margin-left: 1.6cqw; }
+.slide .so-row .res { font-family: var(--dh-cond); font-weight: 800; font-size: 4.2cqw; letter-spacing: .08em; text-transform: uppercase; color: var(--dh-ice-dim); }
+.slide .so-row .res.save { color: var(--accent); }
+.slide .so-row .res.goal { color: var(--dh-ice); }
+
+/* Výrok / skandování */
+.slide .chant { font-family: var(--dh-display); font-size: 24cqw; line-height: .84; text-transform: uppercase; margin: 0; }
+.slide .chant .hl { color: var(--accent); }
+
+/* CTA slajd */
+.slide .cta-logo { width: 46cqw; height: 46cqw; border-radius: 50%; align-self: center; box-shadow: 0 0 0 .5cqw var(--dh-ice), 0 2cqw 6cqw rgba(0,0,0,.7); }
+.slide .cta-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; }
+.slide .cta-actions span {
+  text-align: center; padding: 2.4cqw 1cqw 2cqw; border: .35cqw solid rgba(242,246,250,.5);
+  font-family: var(--dh-cond); font-weight: 800; font-size: 4.2cqw; letter-spacing: .1em; text-transform: uppercase;
+}
+.slide .cta-actions span:first-child { background: var(--accent); border-color: var(--accent); }
+.slide.accent-neon .cta-actions span:first-child { color: var(--dh-black); }
+
+/* YouTube thumbnail */
+.slide--yt .photo {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 12, 0) 34%, rgba(10, 10, 12, .92) 60%, var(--dh-black) 100%),
+    radial-gradient(70% 80% at 45% 40%, rgba(170, 190, 215, .30), transparent 70%),
+    linear-gradient(160deg, #1b2f4a 0%, #0b1a2e 55%, #050507 100%);
+}
+.slide--yt .photo-note {
+  position: absolute; left: 3.5cqw; top: 50%; transform: translateY(-50%);
+  width: 46cqw; font-family: var(--dh-cond); font-weight: 600; font-size: 1.9cqw; line-height: 1.35;
+  letter-spacing: .06em; text-transform: uppercase; color: rgba(242,246,250,.55);
+  border: .2cqw dashed rgba(242,246,250,.35); padding: 2cqw;
+}
+.slide--yt .yt-text {
+  position: absolute; right: 4cqw; top: 50%; transform: translateY(-50%);
+  font-family: var(--dh-display); text-align: right; line-height: .8; text-transform: uppercase;
+  font-size: 25cqw; color: var(--dh-ice); white-space: nowrap; padding-top: 2cqw;
+  text-shadow: 0 .6cqw 0 rgba(0,0,0,.6), 0 0 4cqw rgba(0,0,0,.7);
+}
+.slide--yt .yt-text .hl { color: var(--accent); }
+.slide--yt .yt-logo { position: absolute; left: 2.6cqw; bottom: 3cqw; width: 8.5cqw; height: 8.5cqw; border-radius: 50%; box-shadow: 0 0 0 .25cqw var(--dh-ice); }
+.slide--yt .yt-stripe { position: absolute; left: 0; right: 0; bottom: 0; height: 1.1cqw; background: var(--accent); }
+
+/* TikTok bezpečné zóny (jen pro náhled) */
+.slide .safe { position: absolute; inset: 0; pointer-events: none; display: none; }
+.slide.show-safe .safe { display: block; }
+.slide .safe i { position: absolute; background: repeating-linear-gradient(45deg, rgba(245,228,0,.22) 0 1.2cqw, rgba(245,228,0,.08) 1.2cqw 2.4cqw); outline: .3cqw dashed rgba(245,228,0,.7); }
+.slide .safe .top { left: 0; right: 0; top: 0; height: 12.5cqw; }
+.slide .safe .bottom { left: 0; right: 0; bottom: 0; height: 37cqw; }
+.slide .safe .side { right: 0; top: 12.5cqw; bottom: 37cqw; width: 11cqw; }

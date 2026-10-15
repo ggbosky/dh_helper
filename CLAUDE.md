@@ -28,7 +28,22 @@ Všechny vizuální i textové výstupy musí striktně odpovídat identitě kan
 
   * Dark mode / hokejová atmosféra: temně modrá, černá, akcenty ledově bílé, agresivní červené nebo neonově žluté pro maximální kontrast.
   * V jednom výstupu používej max. **jeden** agresivní akcent (červená NEBO žlutá), ne oba naráz.
-  * Typografie: titulky tučný kondenzovaný grotesk ve verzálkách (např. *Bebas Neue*, *Anton*, *Oswald Bold*), text grotesk (*Inter*, *Barlow*). Vždy s plnou podporou české diakritiky.
+    * **Posty a carousely:** signální červená `#E10600`.
+    * **Thumbnaily:** neonově žlutá `#F5E400`, když je fotka sama plná červené (dresy, světla); jinak červená.
+  * **Typografie** (lokálně v `studio/fonts/`, všechny s českou diakritikou):
+    * Titulky: **Bebas Neue**, verzálky.
+    * Štítky, popisky, čísla: **Barlow Condensed** 600/800, verzálky s prostrkáním.
+    * Běžný text: **Barlow** 400–600.
+* **Formáty a sítě:** Deník Hokeje publikuje na **Instagramu, Facebooku a TikToku** + YouTube.
+
+  | Kanál | Formát | Rozměr | Třída ve studiu |
+  |---|---|---|---|
+  | Instagram carousel / post | 4:5 | 1080 × 1350 | `.slide--ig` |
+  | Facebook post / carousel | 4:5 (stejné slajdy jako IG) | 1080 × 1350 | `.slide--ig` |
+  | TikTok foto-carousel | 9:16 | 1080 × 1920 | `.slide--tt` |
+  | YouTube thumbnail | 16:9 | 1280 × 720 | `.slide--yt` |
+
+  * TikTok: text drž mimo zakryté zóny – horních ~130 px, spodních ~400 px (popisek), pravých ~120 px (tlačítka).
 * **STRIKTNÍ ZÁKAZ „AI LOOKU":** žádné přemrštěné AI efekty, nepřirozené plastové obličeje ani nerealistická světla. Vše musí vypadat jako profesionální práce grafické redakce sportovních médií (Bleacher Report, ESPN, NHL).
 
 ---
@@ -62,6 +77,7 @@ Všechny vizuální i textové výstupy musí striktně odpovídat identitě kan
   * **Poslední slajd:** výzva k akci (Komentář / Uložení / Odběr) s logem Deník Hokeje.
 * **Caption:** kompletní text k příspěvku včetně chytlavého prvního řádku, otázky pro komunitu a hashtagů.
 * Šablona: `templates/carousel.md`. Výstup do `output/posty/`.
+* **Grafika:** slajdy se stavějí jako HTML ve `studio/` z komponent v `studio/brand.css` (vzor: `studio/index.html`) a exportují do PNG příkazem `node tools/render.mjs <soubor.html> <výstupní složka>`.
 
 ### D) Virální analytik & Ideamaker → skill `/napady`
 * Neustálé vymýšlení virálních témat a konceptů (kontroverze, skryté příběhy, finanční pozadí, neznámé historické momenty, rivality).
@@ -97,6 +113,8 @@ reference/scenare/    referenční scénáře (styl, pacing, dramaturgie)
 reference/posty/      ukázkové posty a carousely (typografie, layout)
 reference/thumbnaily/ ukázkové náhledovky
 templates/            šablony výstupů pro jednotlivé moduly
+studio/               HTML grafika: brand.css (slide systém), fonty, live preview (index.html)
+tools/render.mjs      export slajdů do PNG (Playwright), `npm install` jednou předem
 output/               hotové výstupy (scénáře, thumbnaily, posty, nápady)
 .claude/skills/       slash příkazy /scenar, /thumbnail, /post, /napady
 ```

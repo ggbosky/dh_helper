@@ -1,0 +1,11 @@
+{
+  "name": "denik-hokeje-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node tools/render.mjs studio/index.html output/posty/2026-10-15-nagano-1998"
+  },
+  "devDependencies": {
+    "playwright": "1.56.1"
+  }
+}
