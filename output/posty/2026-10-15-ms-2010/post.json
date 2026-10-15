@@ -1,0 +1,71 @@
+{
+  "name": "ms-2010",
+  "format": "ig",
+  "slides": [
+    {
+      "template": "titulek",
+      "photo": "../../../studio/demo/ruzicka-2010.jpg",
+      "kicker": "MS 2010",
+      "headline": "*Zlato*, které před turnajem *nikdo nečekal*.",
+      "fit": {
+        "x": 0.5,
+        "y": 0.35,
+        "zoom": 1.15
+      },
+      "wordmark": "dark"
+    },
+    {
+      "template": "titulek",
+      "photo": "../../../studio/demo/jagr-2010.jpg",
+      "kicker": "Finále 23. 5.",
+      "headline": "Česko porazilo *Rusko 2:1*. Rozhodli *Klepiš* a *Rolinek*.",
+      "fit": {
+        "x": 0.3,
+        "y": 0.85,
+        "zoom": 1.35
+      },
+      "wordmark": "dark"
+    },
+    {
+      "template": "titulek",
+      "photo": "../../../studio/demo/ruzicka-2010.jpg",
+      "kicker": "Návrat do Prahy",
+      "headline": "*Vladimír Růžička* a pohár pro *mistry světa*.",
+      "fit": {
+        "x": 0.62,
+        "y": 0.4,
+        "zoom": 1.9
+      },
+      "wordmark": "dark"
+    },
+    {
+      "template": "slovnicek",
+      "photo": "../../../studio/demo/tym-2015.jpg",
+      "term": "modrá čára",
+      "desc": "čára, která odděluje střední pásmo od útočného a obranného. Před zápasem se na ní při hymně seřadí celý tým.",
+      "textY": 0.3,
+      "termSize": 72,
+      "descSize": 21,
+      "descWidth": 420,
+      "textColor": "light",
+      "wordmark": "auto",
+      "fit": {
+        "x": 0.3,
+        "y": 0.5,
+        "zoom": 1
+      }
+    },
+    {
+      "template": "titulek",
+      "photo": "../../../studio/demo/jagr-2010.jpg",
+      "kicker": "Deník Hokeje",
+      "headline": "Který titul tě *dostal nejvíc*? Napiš to do *komentářů*.",
+      "fit": {
+        "x": 0.1,
+        "y": 0.75,
+        "zoom": 1.5
+      },
+      "wordmark": "dark"
+    }
+  ]
+}

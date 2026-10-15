@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "render": "node tools/render.mjs studio/index.html output/posty/2026-10-15-nagano-1998"
+    "render": "node tools/render-post.mjs output/posty/2026-10-15-ms-2010/post.json",
+    "studio": "python3 -m http.server 8000 --directory studio"
   },
   "devDependencies": {
     "playwright": "1.56.1"

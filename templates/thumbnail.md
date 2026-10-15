@@ -4,7 +4,7 @@
 - **Příběhový kontrast:** … vs …
 - **Dominantní emoce:** …
 - **Text (max 1–3 slova):** „…"
-- **Akcentní barva:** signální červená `#E10600` / neonově žlutá `#F5E400` (jen jedna)
+- **Styl:** šablona `titulek` ve formátu `yt` (červený přechod, Montserrat nadpis s podtržením, Roboto Bold, klíčové slovo `#FE0000`)
 
 ## Layout (1280×720, 16:9)
 | Zóna | Obsah |

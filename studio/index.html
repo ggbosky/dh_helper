@@ -1,572 +1,867 @@
+<meta charset="utf-8">
 <title>Deník Hokeje Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="brand.css">
+<link rel="stylesheet" href="fonts.css">
 <style>
-  /* Layout: tmavá redakční "střižna" – úzký sloupec textu, široké pásy pro grafiku, sticky navigace */
+  /* Layout: tmavý kreativní nástroj – boční navigace, uprostřed plátno, vpravo inspektor */
   :root {
-    --bg: #08090B;
-    --panel: #10141B;
-    --line: #222A36;
-    --fg: #F2F6FA;
-    --muted: #93A1B3;
-    --accent: #E10600;
-    --brand: #A41E1E;
-    --display: "Bebas Neue", "Barlow Condensed", Impact, sans-serif;
-    --cond: "Barlow Condensed", "Arial Narrow", sans-serif;
-    --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+    --bg: #0B0B0D;
+    --panel: #141417;
+    --panel-2: #1B1B1F;
+    --line: #2A2A31;
+    --fg: #F4F4F5;
+    --muted: #9D9DA6;
+    --faint: #6B6B74;
+    --red: #FE0000;
+    --red-soft: rgba(254, 0, 0, .14);
+    --gold: #C9A44C;
+    --display: Montserrat, "Arial Black", sans-serif;
+    --ui: Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: Gelasio, Georgia, serif;
+    --radius: 10px;
     color-scheme: dark;
   }
-  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
-  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-  body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body { background: var(--bg); color: var(--fg); font-family: var(--ui); font-size: 14px; line-height: 1.5; }
+  button, input, textarea, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+  code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; color: var(--fg); background: var(--panel-2); border-radius: 4px; padding: 0 4px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
-  header.top { border-bottom: 1px solid var(--line); background: linear-gradient(180deg, #0B1A2E 0%, var(--bg) 100%); }
-  header.top .wrap { display: flex; gap: 20px; align-items: center; padding-block: 28px 24px; flex-wrap: wrap; }
-  header.top img { width: 76px; height: 76px; border-radius: 50%; box-shadow: 0 0 0 2px var(--fg); }
-  header.top h1 { font-family: var(--display); font-weight: 400; font-size: clamp(40px, 6vw, 64px); line-height: .9; margin: 0; letter-spacing: .01em; }
-  header.top p { margin: 4px 0 0; color: var(--muted); font-family: var(--cond); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 14px; }
-  header.top .pack { margin-left: auto; text-align: right; min-width: 0; }
-  header.top .pack strong { display: block; font-family: var(--cond); font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; }
-  @media (max-width: 640px) { header.top .pack { margin-left: 0; text-align: left; } }
+  .app { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100%; }
 
-  nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; background: rgba(8, 9, 11, .92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
-  nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 10px; scrollbar-width: none; }
-  nav.tabs a { flex: none; color: var(--muted); text-decoration: none; font-family: var(--cond); font-weight: 800; text-transform: uppercase; letter-spacing: .1em; font-size: 14px; padding: 8px 12px; border: 1px solid transparent; }
-  nav.tabs a:hover, nav.tabs a:focus-visible { color: var(--fg); border-color: var(--line); outline: none; }
+  /* ---------- boční navigace ---------- */
+  .side { border-right: 1px solid var(--line); background: #0E0E10; padding-block: 22px; padding-left: max(18px, env(safe-area-inset-left, 0px)); padding-right: 18px; display: flex; flex-direction: column; gap: 26px; position: sticky; top: 0; height: 100vh; }
+  .brand { display: grid; gap: 10px; }
+  .brand img { width: 128px; height: auto; }
+  .brand span { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: var(--muted); }
+  .nav { display: grid; gap: 2px; }
+  .nav button { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: none; border: 0; border-radius: 8px; padding: 10px 12px; color: var(--muted); font-weight: 500; font-size: 14px; cursor: pointer; }
+  .nav button svg { width: 18px; height: 18px; flex: none; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .nav button:hover { background: var(--panel); color: var(--fg); }
+  .nav button[aria-current="page"] { background: var(--panel-2); color: var(--fg); box-shadow: inset 3px 0 0 var(--red); }
+  .side .foot { margin-top: auto; color: var(--faint); font-size: 12px; line-height: 1.45; }
 
-  section { border-bottom: 1px solid var(--line); }
-  section > .wrap { padding-block: 48px; display: grid; gap: 24px; }
-  .sec-head { display: grid; gap: 6px; }
-  .sec-head .kicker { font-family: var(--cond); font-weight: 800; text-transform: uppercase; letter-spacing: .14em; font-size: 13px; color: var(--accent); }
-  .sec-head h2 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 5vw, 52px); line-height: .95; margin: 0; letter-spacing: .01em; text-wrap: balance; }
-  .sec-head p { margin: 0; color: var(--muted); max-width: 68ch; }
-  .spec { font-family: var(--cond); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  /* ---------- obecné ---------- */
+  main { min-width: 0; }
+  .view { padding-block: 26px 48px; padding-left: 28px; padding-right: max(28px, env(safe-area-inset-right, 0px)); }
+  .view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+  .view-head h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(24px, 3vw, 32px); letter-spacing: -.02em; line-height: 1.1; text-wrap: balance; }
+  .view-head p { margin: 4px 0 0; color: var(--muted); max-width: 64ch; }
+  .eyebrow { font-family: var(--display); font-weight: 800; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); }
 
-  .split { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 28px; align-items: start; }
-  @media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
-  .stack { display: grid; gap: 14px; min-width: 0; }
+  .seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 9px; padding: 3px; gap: 2px; flex-wrap: wrap; }
+  .seg button { border: 0; background: none; border-radius: 7px; padding: 7px 12px; font-weight: 500; font-size: 13px; color: var(--muted); cursor: pointer; white-space: nowrap; }
+  .seg button:hover { color: var(--fg); }
+  .seg button[aria-pressed="true"] { background: var(--fg); color: #0B0B0D; }
+  .seg.small button { padding: 5px 9px; font-size: 12px; }
 
-  .mini { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
-  .mini figure { margin: 0; display: grid; gap: 6px; }
-  .mini .phone-thumb { width: 168px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--line); background: var(--panel-2); border-radius: 9px; padding: 9px 14px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: #3a3a42; background: #222227; }
+  .btn.primary { background: var(--red); border-color: var(--red); color: #fff; font-weight: 700; }
+  .btn.primary:hover { background: #e00000; }
+  .btn.ghost { background: none; }
+  .btn.sm { padding: 5px 10px; font-size: 12px; }
+  .btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-btn { width: 32px; height: 32px; padding: 0; font-size: 18px; }
 
-  .box { background: var(--panel); border: 1px solid var(--line); padding: 18px; display: grid; gap: 10px; min-width: 0; }
-  .box h3 { margin: 0; font-family: var(--cond); font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: 15px; }
-  .box pre { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.55; color: #D4DCE6; }
-  .box ul { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
-  .box-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-  button.copy { font-family: var(--cond); font-weight: 800; letter-spacing: .1em; text-transform: uppercase; font-size: 13px; color: var(--fg); background: transparent; border: 1px solid var(--line); padding: 6px 12px; cursor: pointer; }
-  button.copy:hover { border-color: var(--fg); }
-  button.copy:focus-visible, .toggle input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* ---------- editor ---------- */
+  .editor { display: grid; grid-template-columns: 148px minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+  .strip { display: grid; gap: 10px; position: sticky; top: 16px; }
+  .strip-list { display: grid; gap: 10px; max-height: calc(100vh - 170px); overflow-y: auto; padding: 3px; }
+  .thumb { position: relative; border: 0; padding: 0; background: none; cursor: pointer; border-radius: 8px; overflow: hidden; outline: 2px solid transparent; outline-offset: 2px; }
+  .thumb canvas { display: block; width: 100%; height: auto; }
+  .thumb[aria-current="true"] { outline-color: var(--red); }
+  .thumb .num { position: absolute; left: 6px; top: 6px; background: rgba(0,0,0,.72); color: #fff; font-size: 11px; font-weight: 700; border-radius: 5px; padding: 1px 6px; font-variant-numeric: tabular-nums; }
+  .strip-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .strip-actions .btn { padding: 7px 8px; font-size: 12px; }
 
-  .reel { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 340px); gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 14px; }
-  .reel > figure { margin: 0; scroll-snap-align: start; display: grid; gap: 8px; }
-  .reel figcaption, .mini figcaption { font-family: var(--cond); font-weight: 600; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .stage-wrap { display: grid; gap: 12px; min-width: 0; }
+  .stage-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .stage { position: relative;
+    background-color: #0F0F11;
+    background-image: radial-gradient(#1d1d22 1px, transparent 1px);
+    background-size: 18px 18px;
+    border: 1px solid var(--line); border-radius: 14px; display: grid; place-items: center; padding: 22px; min-height: 420px; }
+  .canvas-box { position: relative; max-width: 100%; }
+  #main-canvas { display: block; width: 100%; height: auto; border-radius: 4px; box-shadow: 0 24px 70px rgba(0,0,0,.6); cursor: grab; touch-action: none; }
+  #main-canvas:active { cursor: grabbing; }
+  .safe { position: absolute; inset: 0; pointer-events: none; }
+  .safe i { position: absolute; background: repeating-linear-gradient(45deg, rgba(254,0,0,.22) 0 8px, rgba(254,0,0,.07) 8px 16px); border: 1px dashed rgba(254,0,0,.8); }
+  .hint { color: var(--faint); font-size: 12px; }
+  .drop-over .stage { border-color: var(--red); box-shadow: 0 0 0 3px var(--red-soft) inset; }
 
-  .tt-wrap { width: min(360px, 100%); }
-  .toggle { display: inline-flex; gap: 10px; align-items: center; cursor: pointer; font-family: var(--cond); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; font-size: 14px; }
-  .toggle input { width: 18px; height: 18px; accent-color: #F5E400; }
+  .inspector { display: grid; gap: 14px; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow-y: auto; padding-right: 2px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: grid; gap: 12px; min-width: 0; }
+  .card h3 { margin: 0; font-family: var(--display); font-weight: 700; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .field { display: grid; gap: 6px; }
+  .field > span { font-size: 12px; color: var(--muted); font-weight: 500; display: flex; justify-content: space-between; gap: 8px; }
+  .field > span output { color: var(--fg); font-variant-numeric: tabular-nums; }
+  input[type="text"], textarea { width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px; font-size: 14px; }
+  textarea { resize: vertical; min-height: 84px; line-height: 1.45; }
+  input[type="text"]:focus, textarea:focus { border-color: #4a4a52; outline: none; }
+  input[type="range"] { width: 100%; accent-color: var(--red); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .drop { border: 1.5px dashed #3a3a42; border-radius: 9px; padding: 14px; text-align: center; color: var(--muted); cursor: pointer; display: grid; gap: 2px; }
+  .drop:hover { border-color: var(--fg); color: var(--fg); }
+  .drop strong { color: var(--fg); font-weight: 600; }
+  .photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .photos button { padding: 0; border: 0; border-radius: 6px; overflow: hidden; cursor: pointer; aspect-ratio: 1; outline: 2px solid transparent; outline-offset: 1px; background: var(--panel-2); }
+  .photos button img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photos button[aria-pressed="true"] { outline-color: var(--red); }
+  .tip { margin: 0; font-size: 12px; color: var(--faint); }
+  .counter { font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; font-weight: 400; }
+  .toast { position: fixed; left: 50%; bottom: max(20px, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: #0B0B0D; padding: 10px 16px; border-radius: 9px; font-weight: 600; box-shadow: 0 10px 30px rgba(0,0,0,.5); z-index: 50; max-width: calc(100% - 32px); }
 
-  .caption-text { white-space: pre-line; font-size: 16px; line-height: 1.6; }
-  .caption-text .first { font-weight: 600; }
+  .modal { position: fixed; inset: 0; background: rgba(0,0,0,.8); display: grid; place-items: center; z-index: 60; padding: 20px; }
+  .modal-box { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 12px; max-width: min(520px, 100%); max-height: 100%; overflow: auto; }
+  .modal-box img { width: 100%; height: auto; border-radius: 6px; }
 
-  .script { display: grid; gap: 22px; max-width: 760px; }
-  .beat { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 18px; }
-  @media (max-width: 560px) { .beat { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
-  .beat .tc { font-family: var(--cond); font-weight: 800; font-size: 15px; letter-spacing: .04em; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 3px; }
-  .beat h4 { margin: 0 0 6px; font-family: var(--cond); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 17px; }
-  .beat p { margin: 0 0 8px; }
-  .vis { display: block; font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: .03em; color: #8FB4E8; margin-bottom: 6px; }
-  .ost { display: block; font-family: var(--cond); font-weight: 600; font-size: 14px; letter-spacing: .03em; color: #F5E400; margin-bottom: 6px; }
-  .verify { font-family: var(--cond); font-weight: 700; font-size: 13px; color: #FF8A80; letter-spacing: .04em; }
+  /* ---------- galerie ---------- */
+  .gallery-sec { display: grid; gap: 14px; margin-bottom: 34px; }
+  .gallery-sec h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 18px; letter-spacing: -.01em; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .tile { margin: 0; display: grid; gap: 8px; }
+  .tile img, .tile canvas { width: 100%; height: auto; border-radius: 8px; display: block; background: var(--panel); }
+  .tile figcaption { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+  .credits { margin: 0; font-size: 12px; color: var(--faint); }
 
-  .ideas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-  @media (max-width: 900px) { .ideas { grid-template-columns: minmax(0, 1fr); } }
-  .idea { border-top: 4px solid var(--brand); background: var(--panel); padding: 18px; display: grid; gap: 10px; align-content: start; }
-  .idea .cat { font-family: var(--cond); font-weight: 800; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-  .idea h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 30px; line-height: 1; letter-spacing: .01em; }
+  /* ---------- texty: scénář, nápady, brand ---------- */
+  .doc { max-width: 780px; display: grid; gap: 18px; }
+  .beat { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .beat:last-child { border-bottom: 0; }
+  .beat .tc { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; padding-top: 2px; }
+  .beat h4 { margin: 0 0 6px; font-family: var(--display); font-weight: 800; font-size: 16px; letter-spacing: -.01em; }
+  .beat p { margin: 0 0 8px; font-size: 15px; line-height: 1.6; max-width: 65ch; }
+  .vis { display: block; font-size: 13px; color: #8FB4E8; margin-bottom: 6px; }
+  .ost { display: block; font-size: 13px; color: #F5D04A; margin-bottom: 6px; }
+  .verify { font-size: 12px; font-weight: 700; color: #FF8A80; }
+  @media (max-width: 560px) { .beat { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+
+  .ideas { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .idea { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .idea .cat { font-family: var(--display); font-weight: 800; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--red); }
+  .idea h3 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 19px; letter-spacing: -.01em; line-height: 1.2; text-wrap: balance; }
   .idea dl { margin: 0; display: grid; gap: 8px; }
-  .idea dt { font-family: var(--cond); font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
-  .idea dd { margin: 0; font-size: 15px; }
+  .idea dt { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .idea dd { margin: 0; font-size: 14px; }
+
+  .thumb-layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+  .thumb-layout canvas { width: 100%; height: auto; border-radius: 8px; display: block; }
+  .mini-thumb { width: 168px; }
+  pre.prompt { margin: 0; white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; color: #D4D4DA; }
 
   .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
-  .sw { border: 1px solid var(--line); display: grid; }
-  .sw .chip { height: 72px; }
-  .sw .meta { padding: 10px 12px; display: grid; gap: 2px; background: var(--panel); }
-  .sw .meta b { font-family: var(--cond); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; font-size: 14px; }
-  .sw .meta code { font-size: 13px; color: var(--muted); }
-  .type-spec { display: grid; gap: 14px; }
-  .type-spec .d { font-family: var(--display); font-size: clamp(44px, 7vw, 76px); line-height: .9; }
-  .type-spec .c { font-family: var(--cond); font-weight: 800; font-size: 26px; text-transform: uppercase; letter-spacing: .08em; }
-  .type-spec .b { font-family: var(--body); font-size: 18px; max-width: 60ch; }
-  .rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .sw { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--panel); }
+  .sw .chip { height: 64px; }
+  .sw .meta { padding: 10px 12px; display: grid; gap: 1px; }
+  .sw .meta b { font-weight: 600; }
+  .sw .meta code { font-size: 12px; color: var(--muted); background: none; padding: 0; }
+  .type-row { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 16px; align-items: baseline; padding-block: 14px; border-bottom: 1px solid var(--line); }
+  .type-row:last-child { border-bottom: 0; }
+  .type-row small { color: var(--muted); font-size: 12px; }
+  @media (max-width: 560px) { .type-row { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+  .rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+  .rules .card p { margin: 0; color: #D4D4DA; }
 
-  footer.end .wrap { padding-block: 32px 48px; color: var(--muted); font-size: 14px; display: grid; gap: 6px; }
-  footer.end code { color: var(--fg); }
+  /* ---------- responzivita ---------- */
+  @media (max-width: 1180px) {
+    .editor { grid-template-columns: minmax(0, 1fr) 320px; }
+    .strip { grid-column: 1 / -1; position: static; }
+    .strip-list { grid-auto-flow: column; grid-auto-columns: 92px; overflow-x: auto; max-height: none; }
+    .strip-actions { grid-template-columns: repeat(4, auto); justify-content: start; }
+  }
+  @media (max-width: 860px) {
+    .app { grid-template-columns: minmax(0, 1fr); }
+    .side { position: static; height: auto; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 12px; padding-block: 12px; padding-right: max(16px, env(safe-area-inset-right, 0px)); border-right: 0; border-bottom: 1px solid var(--line); }
+    .brand img { width: 96px; }
+    .brand span, .side .foot { display: none; }
+    .nav { grid-auto-flow: column; overflow-x: auto; max-width: 100%; }
+    .nav button { padding: 8px 10px; }
+    .nav button span { display: none; }
+    .editor, .thumb-layout { grid-template-columns: minmax(0, 1fr); }
+    .inspector { position: static; max-height: none; overflow: visible; }
+    .stage { padding: 12px; min-height: 0; }
+    .view { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  }
 </style>
 
-<header class="top">
-  <div class="wrap">
-    <img src="logo.webp" alt="Logo Deník Hokeje">
-    <div>
-      <h1>Deník Hokeje Studio</h1>
-      <p>Live preview výstupů AI enginu</p>
+<div class="app">
+  <aside class="side">
+    <div class="brand">
+      <img src="wordmark.png" alt="Deník Hokeje">
+      <span>Studio</span>
     </div>
-    <div class="pack">
-      <p>Ukázkový balík</p>
-      <strong>Nagano 1998 · Turnaj století</strong>
-    </div>
-  </div>
-</header>
+    <nav class="nav" aria-label="Sekce">
+      <button type="button" data-view="editor" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="14" height="16" rx="2"/><path d="M21 7v10"/></svg><span>Editor postů</span></button>
+      <button type="button" data-view="galerie"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Galerie</span></button>
+      <button type="button" data-view="thumbnail"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg><span>Thumbnail</span></button>
+      <button type="button" data-view="scenar"><svg viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6z"/><path d="M9 11h7M9 15h7M9 7h4"/></svg><span>Scénář</span></button>
+      <button type="button" data-view="napady"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg><span>Nápady</span></button>
+      <button type="button" data-view="brand"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3"/><circle cx="12" cy="7.5" r="1.3"/><circle cx="15.5" cy="10" r="1.3"/></svg><span>Brand</span></button>
+    </nav>
+    <div class="foot">Posty ve stylu Deník Hokeje. Nahraj fotku, napiš text, stáhni PNG.</div>
+  </aside>
 
-<nav class="tabs" aria-label="Sekce">
-  <div class="wrap">
-    <a href="#thumbnail">Thumbnail</a>
-    <a href="#carousel">Carousel</a>
-    <a href="#tiktok">TikTok</a>
-    <a href="#caption">Caption</a>
-    <a href="#scenar">Scénář</a>
-    <a href="#napady">Nápady</a>
-    <a href="#brand">Brand</a>
-  </div>
-</nav>
-
-<!-- ============ THUMBNAIL ============ -->
-<section id="thumbnail">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Modul B · /thumbnail</span>
-      <h2>Náhledovka: „5 Z 5“</h2>
-      <p>Kontrast: pět kanadských hvězd proti jednomu brankáři. Text má tři znaky a čte se i v malém náhledu na mobilu. Levá polovina je místo pro fotku podle promptu níže.</p>
-    </div>
-    <div class="split">
-      <div class="stack">
-        <div class="slide slide--yt accent-neon" data-export="nagano-1998-thumbnail">
-          <div class="ice"></div>
-          <div class="photo"></div>
-          <div class="photo-note">Fotka: Hašek v brankovišti, maska vyhrnutá na čele, výkřik po posledním zákroku. Za ním rozmazaný kanadský hráč s hlavou dole.</div>
-          <div class="yt-text">5 <span class="hl">z</span> 5</div>
-          <img class="yt-logo" src="logo.webp" alt="">
-          <div class="yt-stripe"></div>
+  <main>
+    <!-- =================== EDITOR =================== -->
+    <section class="view" id="view-editor" data-name="editor">
+      <div class="view-head">
+        <div>
+          <span class="eyebrow">Carousel a posty</span>
+          <h1>Editor postů</h1>
+          <p>Slova v hvězdičkách <code>*takto*</code> budou červeně. Fotku posuneš tažením přímo v náhledu.</p>
         </div>
-        <span class="spec">YouTube · 1280 × 720 · akcent neonově žlutá</span>
-        <div class="mini">
-          <figure>
-            <div class="phone-thumb">
-              <div class="slide slide--yt accent-neon">
-                <div class="ice"></div><div class="photo"></div>
-                <div class="yt-text">5 <span class="hl">z</span> 5</div>
-                <img class="yt-logo" src="logo.webp" alt="">
-                <div class="yt-stripe"></div>
+        <div class="row">
+          <button class="btn" type="button" id="copy-json" title="Zadání pro Claude Code (tools/render-post.mjs)"><svg viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/></svg>Kopírovat pro Claude</button>
+          <button class="btn" type="button" id="dl-all"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>Stáhnout carousel (ZIP)</button>
+          <button class="btn primary" type="button" id="dl-one"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></svg>Stáhnout slajd</button>
+        </div>
+      </div>
+
+      <div class="editor" id="editor">
+        <div class="strip">
+          <div class="strip-list" id="strip" aria-label="Slajdy"></div>
+          <div class="strip-actions">
+            <button class="btn" type="button" id="add-titulek">+ Titulek</button>
+            <button class="btn" type="button" id="add-slovnicek">+ Slovník</button>
+            <button class="btn" type="button" id="dup-slide">Duplikovat</button>
+            <button class="btn" type="button" id="del-slide">Smazat</button>
+          </div>
+        </div>
+
+        <div class="stage-wrap">
+          <div class="stage-bar">
+            <div class="seg" role="group" aria-label="Formát" id="seg-format">
+              <button type="button" data-v="ig" aria-pressed="true">Instagram · Facebook</button>
+              <button type="button" data-v="tt" aria-pressed="false">TikTok</button>
+              <button type="button" data-v="yt" aria-pressed="false">YouTube</button>
+            </div>
+            <div class="row">
+              <button class="btn ghost icon-btn" type="button" id="prev-slide" aria-label="Předchozí slajd">‹</button>
+              <span class="counter" id="slide-counter">1 / 1</span>
+              <button class="btn ghost icon-btn" type="button" id="next-slide" aria-label="Další slajd">›</button>
+            </div>
+          </div>
+          <div class="stage" id="stage">
+            <div class="canvas-box" id="canvas-box">
+              <canvas id="main-canvas" width="1080" height="1350" aria-label="Náhled slajdu"></canvas>
+              <div class="safe" id="safe" hidden aria-hidden="true">
+                <i style="left:0;right:0;top:0;height:6.8%"></i>
+                <i style="left:0;right:0;bottom:0;height:20.8%"></i>
+                <i style="right:0;top:6.8%;bottom:20.8%;width:11.1%"></i>
               </div>
             </div>
-            <figcaption>Test čitelnosti · 168 px (mobilní feed)</figcaption>
-          </figure>
-        </div>
-      </div>
-      <div class="stack">
-        <div class="box">
-          <div class="box-head"><h3>Prompt (EN)</h3><button class="copy" type="button" data-copy="prompt-yt">Kopírovat</button></div>
-          <pre id="prompt-yt">Professional sports editorial photograph, 1998 Olympic ice hockey semifinal, Czech goaltender in white jersey and vintage white goalie mask pushed up on his forehead, mouth open in a primal scream of relief, eyes wide, sweat on his face, kneeling in the crease with arms spread, blurred opposing forward in red jersey skating away with head down in the background, shot on Canon EOS-1N with 300mm f/2.8, arena sodium and halide lighting, realistic ice spray, natural skin texture with pores, shallow depth of field, slight 35mm film grain, color graded dark navy and black, subject on the left half, empty dark negative space on the right for headline text, 16:9</pre>
-        </div>
-        <div class="box">
-          <h3>Negative prompt</h3>
-          <pre>plastic skin, airbrushed, CGI, 3d render, oversaturated, glowing eyes, extra fingers, distorted stick, warped jersey numbers, Olympic rings, fake logos, text artifacts, HDR halo, cartoon</pre>
-        </div>
-        <div class="box">
-          <h3>Varianta B na A/B test</h3>
-          <ul>
-            <li>Text „PROČ NE GRETZKY?“ ve žluté</li>
-            <li>Fotka: Gretzky sedí na střídačce, ručník kolem krku, pohled do země</li>
-            <li>Emoce: zklamání a nevíra</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CAROUSEL ============ -->
-<section id="carousel">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Modul C · /post</span>
-      <h2>Carousel: 8 slajdů</h2>
-      <p>Úvodní slajd, který nutí swipnout, šest slajdů obsahu a výzva k akci s logem. Stejné slajdy jdou na Instagram i Facebook. Posouvej do strany.</p>
-      <span class="spec">Instagram + Facebook · 1080 × 1350 (4:5) · akcent signální červená</span>
-    </div>
-    <div class="reel" tabindex="0" aria-label="Slajdy carouselu">
-
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-01">
-          <div class="ice"></div><div class="faceoff"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">1/8</span></div>
-            <div class="spacer"></div>
-            <span class="tag">Semifinále · 20. 2. 1998</span>
-            <h3 class="headline">5 střel.<br><span class="hl">5 zákroků.</span><br>Kanada<br>jde domů.</h3>
-            <div class="redline"></div>
-            <div class="footer"><span>Nagano 1998</span><span class="swipe">Swipni →</span></div>
+          </div>
+          <div class="row" style="justify-content:space-between">
+            <span class="hint" id="format-hint">1080 × 1350 px</span>
+            <label class="row hint" id="safe-label" hidden><input type="checkbox" id="safe-toggle"> Ukázat zóny, které zakryje TikTok</label>
           </div>
         </div>
-        <figcaption>1 · Úvodní slajd</figcaption>
-      </figure>
 
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-02">
-          <div class="ice"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">2/8</span></div>
-            <div class="spacer"></div>
-            <div class="blueline"></div>
-            <h3 class="headline">Poprvé<br>s hráči <span class="hl">NHL</span></h3>
-            <p class="lede">Nagano 1998 byla první olympiáda, na kterou NHL pustila své hvězdy.</p>
-            <p class="body">Kanada přivezla <b>Gretzkyho, Lindrose, Bourquea, Yzermana</b> a v brance <b>Patricka Roye</b>. Česko mělo jednoho muže, kterému v Buffalu říkali Dominátor.</p>
-            <div class="footer"><span>Nagano 1998</span><span>Turnaj století</span></div>
-          </div>
-        </div>
-        <figcaption>2 · Kontext</figcaption>
-      </figure>
-
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-03">
-          <div class="ice"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">3/8</span></div>
-            <h3 class="headline sm">Dominik Hašek<br>v Naganu</h3>
-            <div class="stats">
-              <div class="stat"><span class="num">6</span><span class="lbl">zápasů,<br>všechny v brance</span></div>
-              <div class="stat"><span class="num hl">0,97</span><span class="lbl">obdržené góly<br>na zápas</span></div>
-              <div class="stat"><span class="num">96,1&nbsp;%</span><span class="lbl">úspěšnost<br>zákroků</span></div>
+        <div class="inspector" id="inspector">
+          <div class="card">
+            <h3>Šablona</h3>
+            <div class="seg" role="group" aria-label="Šablona" id="seg-template">
+              <button type="button" data-v="titulek" aria-pressed="true">Titulek s přechodem</button>
+              <button type="button" data-v="slovnicek" aria-pressed="false">Slovníček</button>
             </div>
-            <div class="spacer"></div>
-            <div class="footer"><span>Nagano 1998</span><span>Statistika turnaje</span></div>
           </div>
-        </div>
-        <figcaption>3 · Čísla</figcaption>
-      </figure>
 
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-04">
-          <div class="ice"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">4/8</span></div>
-            <span class="tag">ČR – Kanada · semifinále</span>
-            <div class="timeline">
-              <div class="tl-row key"><span class="t">49:46</span><span class="e"><b>Jiří Šlégr</b><br>Česko jde ve třetí třetině do vedení 1:0.</span></div>
-              <div class="tl-row"><span class="t">58:57</span><span class="e"><b>Trevor Linden</b><br>63 sekund před koncem srovnává na 1:1.</span></div>
-              <div class="tl-row"><span class="t">60–70</span><span class="e"><b>Prodloužení</b><br>Kanada vystřelí 5:1, gól nepadne.</span></div>
-              <div class="tl-row key"><span class="t">SO</span><span class="e"><b>Nájezdy</b><br>Rozhodne jediný gól.</span></div>
+          <div class="card">
+            <h3>Fotka</h3>
+            <label class="drop" id="drop">
+              <strong>Nahraj fotku</strong>
+              <span>nebo ji přetáhni do náhledu</span>
+              <input type="file" id="file" accept="image/*" hidden>
+            </label>
+            <div class="photos" id="photo-picker" aria-label="Ukázkové fotky"></div>
+            <label class="field"><span>Přiblížení <output id="o-zoom">100 %</output></span><input type="range" id="f-zoom" min="1" max="3" step="0.01" value="1"></label>
+            <label class="field"><span>Posun do stran</span><input type="range" id="f-x" min="0" max="1" step="0.005" value="0.5"></label>
+            <label class="field"><span>Posun nahoru a dolů</span><input type="range" id="f-y" min="0" max="1" step="0.005" value="0.5"></label>
+          </div>
+
+          <div class="card" id="card-titulek">
+            <h3>Text</h3>
+            <label class="field"><span>Nadpis s podtržením</span><input type="text" id="f-kicker" placeholder="MS 1947"></label>
+            <label class="field"><span>Hlavní text <span class="counter" id="headline-count"></span></span><textarea id="f-headline" rows="3" placeholder="První *zlato* pro *ČSSR*."></textarea></label>
+            <div class="row"><button class="btn sm" type="button" id="mark-red">Zvýraznit výběr červeně</button></div>
+            <p class="tip">Hvězdičky <code>*slovo*</code> = červená. Enter = vlastní zalomení řádku.</p>
+            <label class="field"><span>Velikost písma <output id="o-hsize">auto</output></span><input type="range" id="f-hsize" min="0" max="200" step="2" value="0"></label>
+            <label class="field"><span>Síla červeného přechodu <output id="o-red">100 %</output></span><input type="range" id="f-red" min="0" max="1.3" step="0.05" value="1"></label>
+          </div>
+
+          <div class="card" id="card-slovnicek" hidden>
+            <h3>Pojem</h3>
+            <label class="field"><span>Pojem</span><input type="text" id="f-term" placeholder="nájezd"></label>
+            <label class="field"><span>Vysvětlení</span><textarea id="f-desc" rows="3" placeholder="když hokejistu…"></textarea></label>
+            <label class="field"><span>Výška textu <output id="o-ty"></output></span><input type="range" id="f-ty" min="0.15" max="0.95" step="0.005" value="0.62"></label>
+            <label class="field"><span>Velikost pojmu <output id="o-tsize"></output></span><input type="range" id="f-tsize" min="40" max="140" step="2" value="68"></label>
+            <label class="field"><span>Velikost vysvětlení <output id="o-dsize"></output></span><input type="range" id="f-dsize" min="14" max="40" step="1" value="21"></label>
+            <div class="field"><span>Barva textu</span>
+              <div class="seg small" role="group" aria-label="Barva textu" id="seg-textcolor">
+                <button type="button" data-v="auto" aria-pressed="true">Auto</button>
+                <button type="button" data-v="dark" aria-pressed="false">Černá</button>
+                <button type="button" data-v="light" aria-pressed="false">Bílá</button>
+              </div>
             </div>
-            <div class="spacer"></div>
-            <div class="footer"><span>Nagano · Big Hat</span><span>20. 2. 1998</span></div>
           </div>
-        </div>
-        <figcaption>4 · Průběh zápasu</figcaption>
-      </figure>
 
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-05">
-          <div class="ice"></div><div class="faceoff"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">5/8</span></div>
-            <h3 class="headline md">Rozstřel</h3>
-            <div class="shootout">
-              <div class="so-row"><span class="who">Reichel<small>ČR</small></span><span class="res goal">Gól přes tyčku</span></div>
-              <div class="so-row"><span class="who">Fleury<small>KAN</small></span><span class="res save">Chytil</span></div>
-              <div class="so-row"><span class="who">Bourque<small>KAN</small></span><span class="res save">Chytil</span></div>
-              <div class="so-row"><span class="who">Nieuwendyk<small>KAN</small></span><span class="res save">Chytil</span></div>
-              <div class="so-row"><span class="who">Lindros<small>KAN</small></span><span class="res save">Břevno</span></div>
-              <div class="so-row"><span class="who">Shanahan<small>KAN</small></span><span class="res save">Chytil</span></div>
+          <div class="card">
+            <h3>Logo</h3>
+            <div class="seg small" role="group" aria-label="Barva loga" id="seg-wordmark">
+              <button type="button" data-v="auto" aria-pressed="false">Auto</button>
+              <button type="button" data-v="dark" aria-pressed="true">Černé</button>
+              <button type="button" data-v="light" aria-pressed="false">Bílé</button>
+              <button type="button" data-v="gold" aria-pressed="false">Zlaté</button>
+              <button type="button" data-v="none" aria-pressed="false">Skrýt</button>
             </div>
-            <div class="spacer"></div>
-            <div class="footer"><span>Hašek 5 z 5</span><span>ČR vítězí 2:1 po nájezdech</span></div>
+          </div>
+
+          <div class="card">
+            <h3>Caption <button class="btn sm" type="button" id="copy-caption">Kopírovat</button></h3>
+            <textarea id="caption" rows="6" aria-label="Caption k příspěvku"></textarea>
+            <span class="counter" id="caption-count"></span>
           </div>
         </div>
-        <figcaption>5 · Nájezdy</figcaption>
-      </figure>
+      </div>
+    </section>
 
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-06">
-          <div class="ice"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">6/8</span></div>
-            <div class="spacer"></div>
-            <h3 class="headline">A kde byl<br><span class="hl">Gretzky?</span></h3>
-            <p class="lede">Na střídačce.</p>
-            <p class="body">Trenér <b>Marc Crawford</b> nedal nejlepšího střelce historie NHL mezi pět jmen pro nájezdy. Kanada to rozebírá dodnes.</p>
-            <div class="spacer"></div>
-            <div class="footer"><span>Nagano 1998</span><span>Rozhodnutí trenéra</span></div>
+    <!-- =================== GALERIE =================== -->
+    <section class="view" id="view-galerie" data-name="galerie" hidden>
+      <div class="view-head">
+        <div>
+          <span class="eyebrow">Reference a ukázky</span>
+          <h1>Galerie</h1>
+          <p>Nahoře ukázkový carousel vygenerovaný ve tvém stylu. Dole tvoje posty, podle kterých engine styl kopíruje.</p>
+        </div>
+      </div>
+      <div class="gallery-sec">
+        <h2>Ukázka: MS 2010, 5 slajdů</h2>
+        <div class="grid" id="demo-grid"></div>
+        <p class="credits">Ukázkové fotky: Jarba (CC BY 3.0), Dan4th Nicholas (CC BY 2.0), Voltmetro (CC0), Wikimedia Commons.</p>
+      </div>
+      <div class="gallery-sec">
+        <h2>Tvoje posty</h2>
+        <div class="grid">
+          <figure class="tile"><img src="ref/titulek-01-jak-sel-cas.webp" alt="Post Jak šel čas" loading="lazy"><figcaption>Titulek · úvodní slajd</figcaption></figure>
+          <figure class="tile"><img src="ref/titulek-02-ms-1947.jpg" alt="Post MS 1947" loading="lazy"><figcaption>Titulek · MS 1947</figcaption></figure>
+          <figure class="tile"><img src="ref/slovnicek-01-trestna-lavice.webp" alt="Post trestná lavice" loading="lazy"><figcaption>Slovníček · trestná lavice</figcaption></figure>
+          <figure class="tile"><img src="ref/slovnicek-02-rolba.webp" alt="Post rolba" loading="lazy"><figcaption>Slovníček · rolba</figcaption></figure>
+          <figure class="tile"><img src="ref/slovnicek-03-najezd.webp" alt="Post nájezd" loading="lazy"><figcaption>Slovníček · nájezd</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== THUMBNAIL =================== -->
+    <section class="view" id="view-thumbnail" data-name="thumbnail" hidden>
+      <div class="view-head">
+        <div>
+          <span class="eyebrow">Modul B · /thumbnail</span>
+          <h1>Náhledovka na YouTube</h1>
+          <p>Stejný vizuální jazyk jako posty: červený přechod, bílý nadpis s podtržením a 1–3 slova obřím písmem.</p>
+        </div>
+        <button class="btn" type="button" id="thumb-to-editor">Upravit v editoru</button>
+      </div>
+      <div class="thumb-layout">
+        <div style="display:grid;gap:12px;min-width:0">
+          <canvas id="thumb-canvas" width="1280" height="720" aria-label="Náhledovka"></canvas>
+          <div class="row" style="align-items:flex-end">
+            <div class="mini-thumb"><canvas id="thumb-mini" width="1280" height="720" aria-label="Náhledovka v malém"></canvas></div>
+            <span class="hint">Test čitelnosti: 168 px, jak ji uvidí divák v mobilu</span>
           </div>
         </div>
-        <figcaption>6 · Kontroverze</figcaption>
-      </figure>
-
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-07">
-          <div class="ice"></div>
-          <div class="inner">
-            <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span><span class="count">7/8</span></div>
-            <span class="tag">Finále · 22. 2. 1998</span>
-            <h3 class="headline md">ČR 1:0 Rusko</h3>
-            <p class="lede">Ve třetí třetině pálí od modré <b>Petr Svoboda</b> po přihrávce Martina Procházky. Jediný gól finále.</p>
-            <p class="body">Hašek zastaví všech <b>20 střel</b>. V Praze se na Staroměstském náměstí sejdou desetitisíce lidí a skandují:</p>
-            <p class="chant">Hašek<br><span class="hl">na Hrad!</span></p>
-            <div class="spacer"></div>
+        <div style="display:grid;gap:12px;min-width:0">
+          <div class="card">
+            <h3>Prompt na fotku (EN) <button class="btn sm" type="button" data-copy="prompt-yt">Kopírovat</button></h3>
+            <pre class="prompt" id="prompt-yt">Professional sports editorial photograph, Czech ice hockey players in white national team jerseys celebrating a world championship gold on an outdoor stage in Prague, one veteran forward in the center holding the trophy above his head, mouth open in a shout of joy, a sea of fans with phones in the foreground, shot on Canon EOS-1D X with 70-200mm f/2.8, natural evening light mixed with stage lights, real skin texture, sweat and stubble, slight film grain, subject in the right two thirds, empty space bottom left for headline text, 16:9</pre>
+          </div>
+          <div class="card">
+            <h3>Negative prompt</h3>
+            <pre class="prompt">plastic skin, airbrushed, CGI, 3d render, oversaturated, glowing eyes, extra fingers, warped jersey numbers, fake logos, text artifacts, HDR halo, cartoon</pre>
+          </div>
+          <div class="card">
+            <h3>Varianta B</h3>
+            <p style="margin:0;color:#D4D4DA">Text „JÁGR SE VRÁTIL“ (Jágr červeně), fotka Jágra s medailí v davu, emoce: hrdost.</p>
           </div>
         </div>
-        <figcaption>7 · Finále a Praha</figcaption>
-      </figure>
+      </div>
+    </section>
 
-      <figure>
-        <div class="slide slide--ig" data-export="nagano-1998-ig-08">
-          <div class="ice"></div><div class="faceoff"></div>
-          <div class="inner">
-            <div class="masthead"><span class="brand">Deník Hokeje</span><span class="count">8/8</span></div>
-            <div class="spacer"></div>
-            <img class="cta-logo" src="logo.webp" alt="Logo Deník Hokeje">
-            <h3 class="headline sm" style="text-align:center">Kde jsi byl ty,<br>když padl <span class="hl">gól Svobody?</span></h3>
-            <p class="body" style="text-align:center; margin-inline:auto">Napiš to do komentářů. Nejlepší vzpomínky dáme do videa.</p>
-            <div class="cta-actions"><span>Komentuj</span><span>Ulož si</span><span>Sleduj</span></div>
-            <div class="spacer"></div>
-          </div>
+    <!-- =================== SCÉNÁŘ =================== -->
+    <section class="view" id="view-scenar" data-name="scenar" hidden>
+      <div class="view-head">
+        <div>
+          <span class="eyebrow">Modul A · /scenar</span>
+          <h1>Šest zápasů, které změnily český hokej</h1>
+          <p>Nagano 1998 · cílová délka 12 minut · začátek scénáře a osnova kapitol.</p>
         </div>
-        <figcaption>8 · Výzva k akci</figcaption>
-      </figure>
+      </div>
+      <div class="doc">
+        <div class="beat"><span class="tc">0:00–0:10</span><div><h4>Hook</h4><span class="vis">[VISUAL: černá obrazovka, jen zvuk bruslí. Střih na zpomalený záběr: Lindros najíždí na Haška.]</span><p>Dvacátého února 1998. Pět nejlepších střelců Kanady. Jeden brankář z Pardubic. A otázka, kterou si hokejová Kanada klade dodnes: proč na led nešel Wayne Gretzky?</p></div></div>
+        <div class="beat"><span class="tc">0:10–0:45</span><div><h4>Retenční zlom</h4><span class="ost">[TEXT NA OBRAZOVCE: NAGANO 1998 · 6 ZÁPASŮ · 6 OBDRŽENÝCH GÓLŮ]</span><p>Tohle je příběh šesti zápasů, které změnily český hokej. Projdeme semifinále minutu po minutě, rozebereme rozstřel, o kterém se v Kanadě mluví dodnes, a na konci se dostaneme k jedné střele od modré čáry, po které zaplnily pražské ulice desetitisíce lidí.</p></div></div>
+        <div class="beat"><span class="tc">Kap. 1</span><div><h4>Turnaj, na který čekal svět</h4><span class="vis">[VISUAL: archiv, zahájení her v Naganu]</span><p>NHL poprvé přerušila sezonu a pustila hráče na olympiádu. Kanada a USA jsou favorité, Česko outsider s jedním trumfem.</p></div></div>
+        <div class="beat"><span class="tc">Kap. 2</span><div><h4>Dominátor</h4><span class="ost">[TEXT NA OBRAZOVCE: Hart Trophy 1997]</span><p>Úřadující držitel Hart Trophy pro nejužitečnějšího hráče NHL.</p></div></div>
+        <div class="beat"><span class="tc">Kap. 3</span><div><h4>Semifinále minutu po minutě</h4><span class="ost">[TEXT NA OBRAZOVCE: 49:46 Šlégr · 58:57 Linden · prodloužení]</span><p>Šlégrův gól ve třetí třetině, Lindenovo vyrovnání 63 sekund před koncem, deset minut prodloužení bez gólu.</p></div></div>
+        <div class="beat"><span class="tc">Kap. 4</span><div><h4>Pět nájezdů, jedno rozhodnutí</h4><p>Reichel trefí tyčku a puk zapadne do branky. Hašek pak chytá Fleuryho, Bourquea, Nieuwendyka, Lindrose a Shanahana. Gretzky sedí na střídačce.</p><span class="verify">[OVĚŘIT: Lindros – břevno, nebo tyčka]</span></div></div>
+        <div class="beat"><span class="tc">Kap. 5</span><div><h4>Finále: jedna střela od modré</h4><p>Procházka, Svoboda, gól. Hašek zastaví všech dvacet střel a Česko má zlato.</p></div></div>
+        <div class="beat"><span class="tc">Závěr</span><div><h4>Výzva k akci</h4><p>Kde jste byli vy, když padl gól Svobody? Napište to do komentářů. A jestli chcete díl o tom, proč Gretzky na nájezd nešel, dejte odběr.</p></div></div>
+      </div>
+    </section>
 
-    </div>
+    <!-- =================== NÁPADY =================== -->
+    <section class="view" id="view-napady" data-name="napady" hidden>
+      <div class="view-head">
+        <div>
+          <span class="eyebrow">Modul D · /napady</span>
+          <h1>Nápady na videa a posty</h1>
+          <p>Název, hook a úhel pohledu, koncept náhledovky a proč to bude fungovat.</p>
+        </div>
+      </div>
+      <div class="ideas">
+        <article class="idea"><span class="cat">Série · Jak šel čas</span><h3>Všechna česká zlata z MS v jednom carouselu</h3><dl><dt>Hook</dt><dd>Od roku 1947 po 2024. Který titul byl nejsladší?</dd><dt>Náhledovka</dt><dd>Dvě generace se stejným pohárem. Text „1947 → 2024“.</dd><dt>Proč to bude fungovat</dt><dd>Nostalgie a otázka do komentářů. Navazuje na tvoji nejsilnější sérii.</dd></dl></article>
+        <article class="idea"><span class="cat">Série · Slovníček</span><h3>Buly, icing, hattrick: slova, která musí znát každý fanoušek</h3><dl><dt>Hook</dt><dd>Víš, proč se vhazování říká buly?</dd><dt>Náhledovka</dt><dd>Detail vhazování, pojem patkovým písmem.</dd><dt>Proč to bude fungovat</dt><dd>Slovníček si lidé ukládají a posílají kamarádům, kteří hokeji nerozumí.</dd></dl></article>
+        <article class="idea"><span class="cat">Kontroverze</span><h3>Proč Gretzky nešel na nájezd?</h3><dl><dt>Hook</dt><dd>Největší střelec historie seděl v Naganu na střídačce, zatímco Kanada vypadla.</dd><dt>Náhledovka</dt><dd>Gretzky s ručníkem proti Haškovi s rukama nahoře. Text „PROČ ON?“</dd><dt>Proč to bude fungovat</dt><dd>Otevřená otázka, kterou řeší české i kanadské publikum.</dd></dl></article>
+      </div>
+    </section>
+
+    <!-- =================== BRAND =================== -->
+    <section class="view" id="view-brand" data-name="brand" hidden>
+      <div class="view-head">
+        <div>
+          <span class="eyebrow">Design system</span>
+          <h1>Brand Deník Hokeje</h1>
+          <p>Barvy, písma a pravidla převzatá z tvých postů.</p>
+        </div>
+      </div>
+      <div class="doc" style="max-width:none">
+        <div class="swatches">
+          <div class="sw"><div class="chip" style="background:#FE0000"></div><div class="meta"><b>Deník červená</b><code>#FE0000</code></div></div>
+          <div class="sw"><div class="chip" style="background:#000000"></div><div class="meta"><b>Černá</b><code>#000000</code></div></div>
+          <div class="sw"><div class="chip" style="background:#FFFFFF"></div><div class="meta"><b>Bílá</b><code>#FFFFFF</code></div></div>
+          <div class="sw"><div class="chip" style="background:linear-gradient(135deg,#B40000,#3a0606 60%,#000)"></div><div class="meta"><b>Červený přechod</b><code>zleva shora</code></div></div>
+          <div class="sw"><div class="chip" style="background:#181818"></div><div class="meta"><b>Logo tmavé</b><code>#181818</code></div></div>
+          <div class="sw"><div class="chip" style="background:#C9A44C"></div><div class="meta"><b>Logo zlaté</b><code>#C9A44C</code></div></div>
+        </div>
+        <div class="card">
+          <div class="type-row"><small>Nadpis s podtržením<br>Montserrat ExtraBold</small><span style="font-family:var(--display);font-weight:800;font-size:40px;letter-spacing:-1px">MS 1947</span></div>
+          <div class="type-row"><small>Hlavní text<br>Roboto Bold</small><span style="font-family:var(--ui);font-weight:700;font-size:34px;line-height:1.1">První <span style="color:var(--red)">zlato</span> pro <span style="color:var(--red)">ČSSR</span> a obrovská radost.</span></div>
+          <div class="type-row"><small>Pojem ve slovníčku<br>Gelasio Bold</small><span style="font-family:var(--serif);font-weight:700;font-size:40px">trestná lavice</span></div>
+          <div class="type-row"><small>Vysvětlení<br>Open Sans</small><span style="font-family:'Open Sans',sans-serif;font-size:15px">když hokejista zlobí a nerespektuje pravidla, jde si sem sednout.</span></div>
+        </div>
+        <div class="rules">
+          <div class="card"><h3>Titulek</h3><p>Fotka přes celý slajd, červený přechod zleva shora, černý spodek. Krátký nadpis s ručně taženým podtržením, pod ním 2–3 řádky a 2–4 slova červeně.</p></div>
+          <div class="card"><h3>Slovníček</h3><p>Fotka bez překryvu. Pojem malými písmeny patkovým písmem, pod ním drobné vysvětlení. Barva textu podle fotky, logo černé, bílé nebo zlaté.</p></div>
+          <div class="card"><h3>Formáty</h3><p>Instagram a Facebook 1080 × 1350. TikTok 1080 × 1920, text mimo spodních 400 px. YouTube 1280 × 720.</p></div>
+          <div class="card"><h3>Logo</h3><p>Nápis DENÍK HOKEJE vlevo nahoře, asi 150 px široký. Kulaté logo jen na profilovku a závěr videa.</p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast" hidden role="status"></div>
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <strong>Uložení obrázku</strong>
+    <span class="hint">Tady nejde soubor stáhnout přímo. Podrž obrázek (mobil) nebo na něj klikni pravým tlačítkem a zvol „Uložit obrázek“.</span>
+    <img id="modal-img" alt="Vyrenderovaný slajd">
+    <button class="btn" type="button" id="modal-close">Zavřít</button>
   </div>
-</section>
+</div>
 
-<!-- ============ TIKTOK ============ -->
-<section id="tiktok">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Modul C · /post · TikTok</span>
-      <h2>TikTok foto-carousel 9:16</h2>
-      <p>Stejný obsah, vyšší formát. Text drží mimo zóny, které na TikToku zakrývá popisek, tlačítka a horní lišta. Zapni si jejich zobrazení.</p>
-      <span class="spec">TikTok · 1080 × 1920 (9:16)</span>
-    </div>
-    <label class="toggle"><input type="checkbox" id="safe-toggle"><span>Ukázat zakryté zóny TikToku</span></label>
-    <div class="tt-wrap">
-      <div class="slide slide--tt" id="tt-slide" data-export="nagano-1998-tiktok-01">
-        <div class="ice"></div><div class="faceoff"></div>
-        <div class="inner">
-          <div class="masthead"><img src="logo.webp" alt=""><span class="brand">Deník Hokeje</span></div>
-          <div class="spacer"></div>
-          <span class="tag">Nagano 1998</span>
-          <h3 class="headline">5 střel.<br><span class="hl">5 zákroků.</span><br>Kanada<br>jde domů.</h3>
-          <div class="redline"></div>
-          <p class="body">Jak Hašek vyřadil nejlepší tým světa.</p>
-        </div>
-        <div class="safe" aria-hidden="true"><i class="top"></i><i class="side"></i><i class="bottom"></i></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ CAPTION ============ -->
-<section id="caption">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Modul C · Caption</span>
-      <h2>Text k příspěvku</h2>
-      <p>Pro Instagram, Facebook i TikTok. Na TikToku stačí první dva odstavce a hashtagy.</p>
-    </div>
-    <div class="box" style="max-width: 720px">
-      <div class="box-head"><h3>Caption</h3><button class="copy" type="button" data-copy="caption-text">Kopírovat</button></div>
-      <div class="caption-text" id="caption-text"><span class="first">5 střel. 5 zákroků. A celá Kanada v šoku. 🥅</span>
-
-20. února 1998 zastavil Dominik Hašek v nájezdech Fleuryho, Bourquea, Nieuwendyka, Lindrose i Shanahana. O dva dny později poslal Petr Svoboda Česko pro olympijské zlato.
-
-Swipni a projdi si turnaj století krok za krokem. 👉
-
-❓ Kde jsi byl ty, když padl gól Svobody? A jestli jsi tehdy ještě nebyl na světě, co ti o Naganu vyprávěli doma?
-
-#denikhokeje #nagano1998 #hasek #dominator #hokej #ceskyhokej #olympiada #nhl #turnajstoleti #hokejovahistorie</div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ SCÉNÁŘ ============ -->
-<section id="scenar">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Modul A · /scenar</span>
-      <h2>Scénář: Šest zápasů, které změnily český hokej</h2>
-      <p>Začátek scénáře a osnova kapitol. Cílová délka 12 minut, asi 1 700 slov.</p>
-    </div>
-    <div class="script">
-      <div class="beat">
-        <span class="tc">0:00–0:10</span>
-        <div>
-          <h4>Hook</h4>
-          <span class="vis">[VISUAL: černá obrazovka, jen zvuk bruslí. Střih na zpomalený záběr: Lindros najíždí na Haška.]</span>
-          <p>Dvacátého února 1998. Pět nejlepších střelců Kanady. Jeden brankář z Pardubic. A otázka, kterou si hokejová Kanada klade dodnes: proč na led nešel Wayne Gretzky?</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">0:10–0:45</span>
-        <div>
-          <h4>Retenční zlom</h4>
-          <span class="ost">[TEXT NA OBRAZOVCE: NAGANO 1998 · 6 ZÁPASŮ · 6 OBDRŽENÝCH GÓLŮ]</span>
-          <p>Tohle je příběh šesti zápasů, které změnily český hokej. Projdeme semifinále minutu po minutě, rozebereme rozstřel, o kterém se v Kanadě mluví dodnes, a na konci se dostaneme k jedné střele od modré čáry, po které zaplnily pražské ulice desetitisíce lidí. A řekneme si, proč se na Nagano vzpomíná i po osmadvaceti letech.</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Kap. 1</span>
-        <div>
-          <h4>Turnaj, na který čekal svět</h4>
-          <span class="vis">[VISUAL: archiv, zahájení her v Naganu, hvězdy NHL na prvním tréninku]</span>
-          <p>NHL poprvé přerušila sezonu a pustila hráče na olympiádu. Kanada a USA jsou favorité, Česko outsider s jedním trumfem.</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Kap. 2</span>
-        <div>
-          <h4>Dominátor</h4>
-          <span class="vis">[VISUAL: Hašek v dresu Buffala, akrobatické zákroky]</span>
-          <span class="ost">[TEXT NA OBRAZOVCE: Hart Trophy 1997]</span>
-          <p>Úřadující držitel Hart Trophy pro nejužitečnějšího hráče NHL. Styl, který trenéři brankářů nedoporučovali, a výsledky, se kterými nikdo nepolemizoval.</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Kap. 3</span>
-        <div>
-          <h4>Semifinále minutu po minutě</h4>
-          <span class="ost">[TEXT NA OBRAZOVCE: časová osa 49:46 · 58:57 · prodloužení]</span>
-          <p>Šlégrův gól ve třetí třetině, Lindenovo vyrovnání 63 sekund před koncem, deset minut prodloužení bez gólu.</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Kap. 4</span>
-        <div>
-          <h4>Pět nájezdů, jedno rozhodnutí</h4>
-          <span class="vis">[VISUAL: všech pět kanadských nájezdů za sebou, zpomaleně]</span>
-          <p>Reichel trefí tyčku a puk zapadne do branky. Pak Hašek chytá Fleuryho, Bourquea, Nieuwendyka, Lindrose a Shanahana. Gretzky sedí na střídačce.</p>
-          <span class="verify">[OVĚŘIT: Lindros, břevno nebo tyčka; prameny se liší]</span>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Kap. 5</span>
-        <div>
-          <h4>Finále: jedna střela od modré</h4>
-          <span class="vis">[VISUAL: gól Petra Svobody, reakce střídačky]</span>
-          <p>Procházka, Svoboda, gól. Hašek zastaví všech dvacet střel a Česko má zlato.</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Kap. 6</span>
-        <div>
-          <h4>Hašek na Hrad</h4>
-          <span class="vis">[VISUAL: Staroměstské náměstí v noci, tisíce lidí, vlajky. Pomalý přechod na logo Deník Hokeje s Hradem.]</span>
-          <p>Návrat do Prahy, oslavy a skandování, které zná každý český fanoušek.</p>
-        </div>
-      </div>
-      <div class="beat">
-        <span class="tc">Závěr</span>
-        <div>
-          <h4>Výzva k akci</h4>
-          <p>Kde jste byli vy, když padl gól Svobody? Napište to do komentářů. Nejlepší vzpomínky přečteme v příštím videu. A jestli chcete další díl o tom, proč Gretzky na nájezd nešel, dejte odběr.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ NÁPADY ============ -->
-<section id="napady">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Modul D · /napady</span>
-      <h2>Další témata na videa</h2>
-      <p>Formát: název, hook a úhel pohledu, koncept náhledovky a důvod, proč to bude fungovat.</p>
-    </div>
-    <div class="ideas">
-      <article class="idea">
-        <span class="cat">Kontroverze</span>
-        <h3>Proč Gretzky nešel na nájezd?</h3>
-        <dl>
-          <dt>Hook</dt><dd>Největší střelec historie seděl na střídačce, zatímco Kanada vypadla. Kdo to rozhodl a proč?</dd>
-          <dt>Náhledovka</dt><dd>Gretzky s ručníkem na střídačce proti Haškovi s rukama nahoře. Text „PROČ ON?“</dd>
-          <dt>Proč to bude fungovat</dt><dd>Navazuje na Nagano a otevřenou otázku z videa. Zaujme české i kanadské publikum.</dd>
-        </dl>
-      </article>
-      <article class="idea">
-        <span class="cat">Finance</span>
-        <h3>Kolik dostali zlatí hoši z Nagana?</h3>
-        <dl>
-          <dt>Hook</dt><dd>Odměny za olympijské zlato v roce 1998 proti tomu, co dnes hráči vydělají za jeden zápas NHL.</dd>
-          <dt>Náhledovka</dt><dd>Zlatá medaile proti balíku dolarů. Text „JEN TOLIK?“</dd>
-          <dt>Proč to bude fungovat</dt><dd>Peníze a srovnání „tehdy a dnes“ patří k nejsdílenějším tématům. <span class="verify">[OVĚŘIT: výše odměn]</span></dd>
-        </dl>
-      </article>
-      <article class="idea">
-        <span class="cat">Rivalita</span>
-        <h3>Sparta proti Slavii: válka o Prahu</h3>
-        <dl>
-          <dt>Hook</dt><dd>Dva kluby, jedno město, desítky let napětí. Které derby bylo nejostřejší?</dd>
-          <dt>Náhledovka</dt><dd>Dva kapitáni čelem k sobě při vhazování, rozdělení napůl rudou a červenobílou. Text „DERBY“</dd>
-          <dt>Proč to bude fungovat</dt><dd>Silné fanouškovské tábory = komentáře. Pražský motiv sedí k logu kanálu.</dd>
-        </dl>
-      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ============ BRAND ============ -->
-<section id="brand">
-  <div class="wrap">
-    <div class="sec-head">
-      <span class="kicker">Design system</span>
-      <h2>Brand Deník Hokeje</h2>
-      <p>Barvy, písma a pravidla, ze kterých engine skládá všechny výstupy.</p>
-    </div>
-    <div class="swatches">
-      <div class="sw"><div class="chip" style="background:#0A0A0C"></div><div class="meta"><b>Hokejová černá</b><code>#0A0A0C</code></div></div>
-      <div class="sw"><div class="chip" style="background:#0B1A2E"></div><div class="meta"><b>Noční led</b><code>#0B1A2E</code></div></div>
-      <div class="sw"><div class="chip" style="background:#F2F6FA"></div><div class="meta"><b>Ledově bílá</b><code>#F2F6FA</code></div></div>
-      <div class="sw"><div class="chip" style="background:#A41E1E"></div><div class="meta"><b>Deník červená</b><code>#A41E1E</code></div></div>
-      <div class="sw"><div class="chip" style="background:#870709"></div><div class="meta"><b>Bordó</b><code>#870709</code></div></div>
-      <div class="sw"><div class="chip" style="background:#E10600"></div><div class="meta"><b>Signální červená</b><code>#E10600</code></div></div>
-      <div class="sw"><div class="chip" style="background:#F5E400"></div><div class="meta"><b>Neonově žlutá</b><code>#F5E400</code></div></div>
-    </div>
-    <div class="box type-spec">
-      <span class="d">Bebas Neue · Hašek na Hrad</span>
-      <span class="c">Barlow Condensed · Semifinále 20. 2. 1998</span>
-      <span class="b">Barlow · Běžný text slajdů a popisků. Plná podpora české diakritiky: ěščřžýáíéůú ĚŠČŘŽÝÁÍÉŮÚ.</span>
-    </div>
-    <div class="rules">
-      <div class="box"><h3>Akcenty</h3><p style="margin:0">Posty a carousely: signální červená. Náhledovky: neonově žlutá, když je fotka sama plná červené, jinak červená. Vždy jen jeden akcent.</p></div>
-      <div class="box"><h3>Formáty</h3><p style="margin:0">Instagram a Facebook 1080 × 1350. TikTok 1080 × 1920 se zakrytými zónami. YouTube 1280 × 720.</p></div>
-      <div class="box"><h3>Logo</h3><p style="margin:0">V hlavičce každého slajdu, velké na posledním. Nikdy neořezávat ani nepřebarvovat. Na tmavém podkladu s bílým okrajem.</p></div>
-      <div class="box"><h3>Bez AI looku</h3><p style="margin:0">Fotky jen jako redakční sportovní fotografie: přirozená kůže, světlo arény, filmové zrno. Žádné plastové obličeje ani svítící efekty.</p></div>
-    </div>
-  </div>
-</section>
-
-<footer class="end">
-  <div class="wrap">
-    <span>Zdroj v repozitáři: <code>studio/index.html</code>. Export slajdů do PNG: <code>node tools/render.mjs studio/index.html</code></span>
-    <span>Fakta ověřena podle Hockey Canada, IIHF a NHL.com. Body označené [OVĚŘIT] je potřeba dohledat před zveřejněním.</span>
-  </div>
-</footer>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="post-renderer.js"></script>
 <script>
-  document.querySelectorAll("button.copy").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      var el = document.getElementById(btn.dataset.copy);
-      var text = el.innerText;
-      var done = function () { btn.textContent = "Zkopírováno"; setTimeout(function () { btn.textContent = "Kopírovat"; }, 1600); };
-      var fallback = function () {
-        var r = document.createRange(); r.selectNodeContents(el);
-        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
-        btn.textContent = "Označeno, zkopíruj Ctrl+C";
-      };
-      try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var $$ = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  var DEMO_PHOTOS = [
+    { key: "demo/ruzicka-2010.jpg", label: "Oslavy MS 2010" },
+    { key: "demo/jagr-2010.jpg", label: "Jágr, MS 2010" },
+    { key: "demo/buly-krejci.jpg", label: "Buly" },
+    { key: "demo/tym-2015.jpg", label: "Reprezentace" }
+  ];
+
+  var DEMO = {
+    format: "ig",
+    caption: "Zlato, které před turnajem nikdo nečekal. 🥇\n\nMS 2010 v Německu: Česko ve finále porazilo Rusko 2:1, góly dali Jakub Klepiš a Tomáš Rolinek. Swipni a zavzpomínej. 👉\n\n❓ Který český titul tě dostal nejvíc?\n\n#denikhokeje #hokej #ms2010 #ceskyhokej #mistrisveta #jakselcas\n\nFoto: Jarba, CC BY 3.0; Dan4th Nicholas, CC BY 2.0; Voltmetro, CC0",
+    slides: [
+      { template: "titulek", photo: "demo/ruzicka-2010.jpg", kicker: "MS 2010", headline: "*Zlato*, které před turnajem *nikdo nečekal*.", fit: { x: 0.5, y: 0.35, zoom: 1.15 }, wordmark: "dark" },
+      { template: "titulek", photo: "demo/jagr-2010.jpg", kicker: "Finále 23. 5.", headline: "Česko porazilo *Rusko 2:1*. Rozhodli *Klepiš* a *Rolinek*.", fit: { x: 0.3, y: 0.85, zoom: 1.35 }, wordmark: "dark" },
+      { template: "titulek", photo: "demo/ruzicka-2010.jpg", kicker: "Návrat do Prahy", headline: "*Vladimír Růžička* a pohár pro *mistry světa*.", fit: { x: 0.62, y: 0.4, zoom: 1.9 }, wordmark: "dark" },
+      { template: "slovnicek", photo: "demo/tym-2015.jpg", term: "modrá čára", desc: "čára, která odděluje střední pásmo od útočného a obranného. Před zápasem se na ní při hymně seřadí celý tým.", textY: 0.3, termSize: 72, descSize: 21, descWidth: 420, textColor: "light", wordmark: "auto", fit: { x: 0.3, y: 0.5, zoom: 1 } },
+      { template: "titulek", photo: "demo/jagr-2010.jpg", kicker: "Deník Hokeje", headline: "Který titul tě *dostal nejvíc*? Napiš to do *komentářů*.", fit: { x: 0.1, y: 0.75, zoom: 1.5 }, wordmark: "dark" }
+    ]
+  };
+  var THUMB = { template: "titulek", photo: "demo/jagr-2010.jpg", kicker: "MS 2010", headline: "*NIKDO* NEVĚŘIL", fit: { x: 0.75, y: 0.9, zoom: 1.45 }, wordmark: "dark" };
+
+  var STORE_KEY = "dh-studio-v2";
+  var state = load() || clone(DEMO);
+  var current = 0;
+  var images = {};
+  var wordmark = null;
+  var downloads = null;
+
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function load() {
+    try { var s = JSON.parse(localStorage.getItem(STORE_KEY)); return s && s.slides && s.slides.length ? s : null; } catch (e) { return null; }
+  }
+  var saveTimer;
+  function persist() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        var s = clone(state);
+        s.slides.forEach(function (sl) { if (sl.photo && sl.photo.indexOf("demo/") !== 0) sl.photo = null; });
+        localStorage.setItem(STORE_KEY, JSON.stringify(s));
+      } catch (e) {}
+    }, 300);
+  }
+
+  function toast(msg) {
+    var t = $("#toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toast.t); toast.t = setTimeout(function () { t.hidden = true; }, 2200);
+  }
+
+  function getImage(key) {
+    if (!key) return Promise.resolve(null);
+    if (images[key]) return Promise.resolve(images[key]);
+    return DH.loadImage(key).then(function (img) { images[key] = img; return img; }).catch(function () { return null; });
+  }
+
+  // ---------- vykreslení ----------
+  function draw(canvas, sl, format) {
+    var s = clone(sl); s.format = format || state.format;
+    DH.render(canvas, s, { photo: sl.photo ? images[sl.photo] : null, wordmark: wordmark });
+  }
+
+  var raf = 0;
+  function redraw() {
+    cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(function () {
+      var sl = state.slides[current];
+      draw($("#main-canvas"), sl);
+      sizeCanvas();
+      var th = $("#strip").children[current];
+      if (th) draw(th.querySelector("canvas"), sl);
+    });
+  }
+
+  function sizeCanvas() {
+    var f = DH.FORMATS[state.format];
+    var stage = $("#stage");
+    var narrow = window.innerWidth <= 860;
+    var maxH = narrow ? window.innerHeight * 0.7 : Math.max(360, window.innerHeight - 200);
+    var maxW = stage.clientWidth - (narrow ? 26 : 46);
+    var w = Math.min(maxW, maxH * f.w / f.h);
+    $("#canvas-box").style.width = Math.max(180, w) + "px";
+  }
+
+  function renderStrip() {
+    var strip = $("#strip");
+    strip.innerHTML = "";
+    state.slides.forEach(function (sl, i) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "thumb";
+      b.setAttribute("aria-label", "Slajd " + (i + 1));
+      if (i === current) b.setAttribute("aria-current", "true");
+      var c = document.createElement("canvas");
+      var n = document.createElement("span"); n.className = "num"; n.textContent = i + 1;
+      b.appendChild(c); b.appendChild(n);
+      b.addEventListener("click", function () { select(i); });
+      strip.appendChild(b);
+      draw(c, sl);
+    });
+    $("#slide-counter").textContent = (current + 1) + " / " + state.slides.length;
+  }
+
+  // ---------- inspektor ----------
+  function setPressed(groupSel, value) {
+    $$(groupSel + " button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.v === String(value))); });
+  }
+
+  function fillInspector() {
+    var sl = state.slides[current];
+    if (!sl.fit) sl.fit = { x: 0.5, y: 0.5, zoom: 1 };
+    setPressed("#seg-template", sl.template);
+    setPressed("#seg-format", state.format);
+    $("#card-titulek").hidden = sl.template !== "titulek";
+    $("#card-slovnicek").hidden = sl.template !== "slovnicek";
+    $("#f-zoom").value = sl.fit.zoom || 1; $("#f-x").value = sl.fit.x; $("#f-y").value = sl.fit.y;
+    $("#f-kicker").value = sl.kicker || "";
+    $("#f-headline").value = sl.headline || "";
+    $("#f-hsize").value = sl.headlineSize || 0;
+    $("#f-red").value = sl.redStrength == null ? 1 : sl.redStrength;
+    $("#f-term").value = sl.term || "";
+    $("#f-desc").value = sl.desc || "";
+    $("#f-ty").value = sl.textY == null ? 0.62 : sl.textY;
+    $("#f-tsize").value = sl.termSize || 68;
+    $("#f-dsize").value = sl.descSize || 21;
+    setPressed("#seg-textcolor", sl.textColor || "auto");
+    setPressed("#seg-wordmark", sl.wordmark || (sl.template === "slovnicek" ? "auto" : "dark"));
+    $$("#photo-picker button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.key === sl.photo)); });
+    $("#caption").value = state.caption || "";
+    updateOutputs();
+    var tt = state.format === "tt";
+    $("#safe-label").hidden = !tt;
+    $("#safe").hidden = !(tt && $("#safe-toggle").checked);
+    var f = DH.FORMATS[state.format];
+    $("#format-hint").textContent = f.w + " × " + f.h + " px · " + (state.format === "ig" ? "stejný slajd pro Instagram i Facebook" : state.format === "tt" ? "TikTok foto-carousel" : "náhledovka na YouTube");
+  }
+
+  function updateOutputs() {
+    var sl = state.slides[current];
+    $("#o-zoom").textContent = Math.round((sl.fit.zoom || 1) * 100) + " %";
+    $("#o-hsize").textContent = sl.headlineSize ? sl.headlineSize + " px" : "auto";
+    $("#o-red").textContent = Math.round((sl.redStrength == null ? 1 : sl.redStrength) * 100) + " %";
+    $("#o-ty").textContent = Math.round((sl.textY == null ? 0.62 : sl.textY) * 100) + " %";
+    $("#o-tsize").textContent = (sl.termSize || 68) + " px";
+    $("#o-dsize").textContent = (sl.descSize || 21) + " px";
+    $("#headline-count").textContent = (sl.headline || "").replace(/\*/g, "").length + " znaků";
+    $("#caption-count").textContent = (state.caption || "").length + " / 2200 znaků (limit Instagramu)";
+  }
+
+  function update(fn, structural) {
+    fn(state.slides[current]);
+    updateOutputs();
+    persist();
+    if (structural) { renderStrip(); fillInspector(); }
+    redraw();
+  }
+
+  function select(i) {
+    current = Math.max(0, Math.min(state.slides.length - 1, i));
+    $$("#strip .thumb").forEach(function (b, j) { if (j === current) b.setAttribute("aria-current", "true"); else b.removeAttribute("aria-current"); });
+    $("#slide-counter").textContent = (current + 1) + " / " + state.slides.length;
+    fillInspector();
+    getImage(state.slides[current].photo).then(redraw);
+  }
+
+  function bindRange(id, apply) {
+    $(id).addEventListener("input", function (e) { var v = parseFloat(e.target.value); update(function (sl) { apply(sl, v); }); });
+  }
+  bindRange("#f-zoom", function (sl, v) { sl.fit.zoom = v; });
+  bindRange("#f-x", function (sl, v) { sl.fit.x = v; });
+  bindRange("#f-y", function (sl, v) { sl.fit.y = v; });
+  bindRange("#f-hsize", function (sl, v) { sl.headlineSize = v || null; });
+  bindRange("#f-red", function (sl, v) { sl.redStrength = v; });
+  bindRange("#f-ty", function (sl, v) { sl.textY = v; });
+  bindRange("#f-tsize", function (sl, v) { sl.termSize = v; });
+  bindRange("#f-dsize", function (sl, v) { sl.descSize = v; });
+
+  function bindText(id, key) {
+    $(id).addEventListener("input", function (e) { var v = e.target.value; update(function (sl) { sl[key] = v; }); });
+  }
+  bindText("#f-kicker", "kicker"); bindText("#f-headline", "headline"); bindText("#f-term", "term"); bindText("#f-desc", "desc");
+  $$("#strip, #f-kicker, #f-headline, #f-term, #f-desc").forEach(function (el) { el.addEventListener("change", renderStrip); });
+
+  $("#caption").addEventListener("input", function (e) { state.caption = e.target.value; updateOutputs(); persist(); });
+
+  $$("#seg-template button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      update(function (sl) {
+        sl.template = b.dataset.v;
+        if (sl.template === "slovnicek" && !sl.term) { sl.term = "pojem"; sl.desc = "krátké vysvětlení pro fanoušky, kteří hokeji teprve přicházejí na chuť."; sl.wordmark = "auto"; }
+        if (sl.template === "titulek" && !sl.headline) { sl.kicker = "MS 2024"; sl.headline = "*Česká reprezentace* přináší *zlato*."; sl.wordmark = "dark"; }
+      }, true);
     });
   });
-  var tog = document.getElementById("safe-toggle");
-  tog.addEventListener("change", function () { document.getElementById("tt-slide").classList.toggle("show-safe", tog.checked); });
+  $$("#seg-format button").forEach(function (b) {
+    b.addEventListener("click", function () { state.format = b.dataset.v; persist(); renderStrip(); fillInspector(); redraw(); });
+  });
+  $$("#seg-textcolor button").forEach(function (b) { b.addEventListener("click", function () { update(function (sl) { sl.textColor = b.dataset.v; }); setPressed("#seg-textcolor", b.dataset.v); }); });
+  $$("#seg-wordmark button").forEach(function (b) { b.addEventListener("click", function () { update(function (sl) { sl.wordmark = b.dataset.v; }); setPressed("#seg-wordmark", b.dataset.v); }); });
+  $("#safe-toggle").addEventListener("change", function (e) { $("#safe").hidden = !e.target.checked; });
+
+  $("#mark-red").addEventListener("click", function () {
+    var ta = $("#f-headline"), a = ta.selectionStart, z = ta.selectionEnd;
+    if (a === z) { toast("Nejdřív označ slova v hlavním textu"); return; }
+    ta.value = ta.value.slice(0, a) + "*" + ta.value.slice(a, z) + "*" + ta.value.slice(z);
+    update(function (sl) { sl.headline = ta.value; });
+    renderStrip();
+    ta.focus(); ta.setSelectionRange(a, z + 2);
+  });
+
+  // ---------- slajdy ----------
+  function addSlide(template) {
+    var base = state.slides[current];
+    var sl = template === "slovnicek"
+      ? { template: "slovnicek", photo: base.photo, term: "pojem", desc: "krátké vysvětlení pro fanoušky.", textY: 0.62, termSize: 68, descSize: 21, textColor: "auto", wordmark: "auto", fit: { x: 0.5, y: 0.5, zoom: 1 } }
+      : { template: "titulek", photo: base.photo, kicker: "MS 2024", headline: "*Česká reprezentace* přináší *zlato*.", wordmark: "dark", fit: { x: 0.5, y: 0.5, zoom: 1 } };
+    state.slides.splice(current + 1, 0, sl);
+    current++;
+    persist(); renderStrip(); fillInspector(); redraw();
+  }
+  $("#add-titulek").addEventListener("click", function () { addSlide("titulek"); });
+  $("#add-slovnicek").addEventListener("click", function () { addSlide("slovnicek"); });
+  $("#dup-slide").addEventListener("click", function () {
+    state.slides.splice(current + 1, 0, clone(state.slides[current])); current++;
+    persist(); renderStrip(); fillInspector(); redraw();
+  });
+  $("#del-slide").addEventListener("click", function () {
+    if (state.slides.length === 1) { toast("Carousel musí mít aspoň jeden slajd"); return; }
+    state.slides.splice(current, 1); current = Math.min(current, state.slides.length - 1);
+    persist(); renderStrip(); fillInspector(); redraw();
+  });
+  $("#prev-slide").addEventListener("click", function () { select(current - 1); });
+  $("#next-slide").addEventListener("click", function () { select(current + 1); });
+
+  // ---------- fotky ----------
+  function usePhotoFile(file) {
+    if (!file || !/^image\//.test(file.type)) { toast("Tohle není obrázek"); return; }
+    var url = URL.createObjectURL(file);
+    DH.loadImage(url).then(function (img) {
+      var key = "upload:" + Date.now() + ":" + file.name;
+      images[key] = img;
+      update(function (sl) { sl.photo = key; sl.fit = { x: 0.5, y: 0.5, zoom: 1 }; }, true);
+      toast("Fotka nahraná");
+    }).catch(function () { toast("Fotku se nepodařilo otevřít"); });
+  }
+  $("#file").addEventListener("change", function (e) { usePhotoFile(e.target.files[0]); e.target.value = ""; });
+  var editorEl = $("#editor");
+  ["dragenter", "dragover"].forEach(function (ev) { editorEl.addEventListener(ev, function (e) { e.preventDefault(); editorEl.classList.add("drop-over"); }); });
+  editorEl.addEventListener("dragleave", function (e) { if (!editorEl.contains(e.relatedTarget)) editorEl.classList.remove("drop-over"); });
+  editorEl.addEventListener("drop", function (e) { e.preventDefault(); editorEl.classList.remove("drop-over"); var f = e.dataTransfer && e.dataTransfer.files[0]; if (f) usePhotoFile(f); });
+
+  var picker = $("#photo-picker");
+  DEMO_PHOTOS.forEach(function (p) {
+    var b = document.createElement("button");
+    b.type = "button"; b.dataset.key = p.key; b.title = p.label; b.setAttribute("aria-label", "Ukázková fotka: " + p.label);
+    var im = document.createElement("img"); im.src = p.key; im.alt = ""; im.loading = "lazy";
+    b.appendChild(im);
+    b.addEventListener("click", function () {
+      getImage(p.key).then(function () { update(function (sl) { sl.photo = p.key; }, true); });
+    });
+    picker.appendChild(b);
+  });
+
+  // Posun fotky tažením v náhledu
+  var cv = $("#main-canvas"), drag = null;
+  cv.addEventListener("pointerdown", function (e) {
+    var sl = state.slides[current], img = images[sl.photo];
+    if (!img) return;
+    var f = DH.FORMATS[state.format], rect = cv.getBoundingClientRect();
+    var scale = Math.max(f.w / img.naturalWidth, f.h / img.naturalHeight) * (sl.fit.zoom || 1);
+    drag = { x: e.clientX, y: e.clientY, fx: sl.fit.x, fy: sl.fit.y, k: f.w / rect.width,
+      ox: img.naturalWidth * scale - f.w, oy: img.naturalHeight * scale - f.h };
+    cv.setPointerCapture(e.pointerId);
+  });
+  cv.addEventListener("pointermove", function (e) {
+    if (!drag) return;
+    var dx = (e.clientX - drag.x) * drag.k, dy = (e.clientY - drag.y) * drag.k;
+    update(function (sl) {
+      if (drag.ox > 1) sl.fit.x = Math.min(1, Math.max(0, drag.fx - dx / drag.ox));
+      if (drag.oy > 1) sl.fit.y = Math.min(1, Math.max(0, drag.fy - dy / drag.oy));
+    });
+    $("#f-x").value = state.slides[current].fit.x; $("#f-y").value = state.slides[current].fit.y;
+  });
+  ["pointerup", "pointercancel"].forEach(function (ev) { cv.addEventListener(ev, function () { drag = null; }); });
+
+  // ---------- export ----------
+  function canvasBlob(sl) {
+    var c = document.createElement("canvas");
+    draw(c, sl);
+    return new Promise(function (r) { c.toBlob(r, "image/png"); });
+  }
+  function fileName(i) { return "denik-hokeje-" + state.format + "-" + String(i + 1).padStart(2, "0") + ".png"; }
+
+  function offerFallback(blob) {
+    $("#modal-img").src = URL.createObjectURL(blob); $("#modal").hidden = false;
+  }
+  function save(name, blob) {
+    if (!downloads) { offerFallback(blob); return Promise.resolve(); }
+    return downloads.save({ filename: name, data: blob }).then(function () { toast("Uloženo: " + name); }).catch(function (err) {
+      var code = err && err.code;
+      if (code === "declined") return;
+      if (code === "rate_limited") { toast("Počkej, ještě je otevřené předchozí stahování"); return; }
+      offerFallback(blob);
+    });
+  }
+  $("#dl-one").addEventListener("click", function () {
+    canvasBlob(state.slides[current]).then(function (b) { return save(fileName(current), b); });
+  });
+  $("#dl-all").addEventListener("click", function () {
+    if (!downloads) { toast("Stahování ZIP tady není dostupné. Ulož slajdy po jednom."); return; }
+    if (typeof JSZip === "undefined") { toast("Knihovna pro ZIP se nenačetla. Ulož slajdy po jednom."); return; }
+    var zip = new JSZip();
+    toast("Připravuji ZIP…");
+    Promise.all(state.slides.map(function (sl) { return getImage(sl.photo); }))
+      .then(function () { return Promise.all(state.slides.map(function (sl, i) { return canvasBlob(sl).then(function (b) { zip.file(fileName(i), b); }); })); })
+      .then(function () { if (state.caption) zip.file("caption.txt", state.caption); return zip.generateAsync({ type: "blob" }); })
+      .then(function (blob) { return save("denik-hokeje-carousel.zip", blob); });
+  });
+  $("#modal-close").addEventListener("click", function () { $("#modal").hidden = true; });
+
+  function copyText(text) {
+    try { navigator.clipboard.writeText(text).then(function () { toast("Zkopírováno"); }, function () { toast("Kopírování se nepovedlo, označ text ručně"); }); }
+    catch (e) { toast("Kopírování se nepovedlo, označ text ručně"); }
+  }
+  $("#copy-caption").addEventListener("click", function () { copyText(state.caption || ""); });
+  $("#copy-json").addEventListener("click", function () {
+    var spec = { format: state.format, slides: state.slides.map(function (sl) {
+      var s = clone(sl);
+      if (s.photo && s.photo.indexOf("upload:") === 0) s.photo = "foto/" + s.photo.split(":").slice(2).join(":");
+      return s;
+    }), caption: state.caption };
+    copyText(JSON.stringify(spec, null, 2));
+  });
+  $$("[data-copy]").forEach(function (b) { b.addEventListener("click", function () { copyText(document.getElementById(b.dataset.copy).innerText); }); });
+
+  // ---------- navigace ----------
+  function show(name) {
+    $$(".view").forEach(function (v) { v.hidden = v.dataset.name !== name; });
+    $$(".nav button").forEach(function (b) { if (b.dataset.view === name) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+    if (name === "editor") redraw();
+    if (name === "galerie") renderGallery();
+    if (name === "thumbnail") renderThumb();
+    try { history.replaceState(null, "", "#" + name); } catch (e) {}
+    window.scrollTo(0, 0);
+  }
+  $$(".nav button").forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.view); }); });
+
+  function renderGallery() {
+    var grid = $("#demo-grid");
+    if (grid.childElementCount) return;
+    Promise.all(DEMO.slides.map(function (sl) { return getImage(sl.photo); })).then(function () {
+      DEMO.slides.forEach(function (sl, i) {
+        var fig = document.createElement("figure"); fig.className = "tile";
+        var c = document.createElement("canvas"); draw(c, sl, "ig");
+        var cap = document.createElement("figcaption");
+        var t = document.createElement("span"); t.textContent = (i + 1) + " · " + (sl.template === "titulek" ? "Titulek" : "Slovníček");
+        var b = document.createElement("button"); b.type = "button"; b.className = "btn sm"; b.textContent = "Otevřít v editoru";
+        b.addEventListener("click", function () { state = clone(DEMO); current = i; persist(); renderStrip(); fillInspector(); show("editor"); });
+        cap.appendChild(t); cap.appendChild(b);
+        fig.appendChild(c); fig.appendChild(cap); grid.appendChild(fig);
+      });
+    });
+  }
+
+  function renderThumb() {
+    getImage(THUMB.photo).then(function () { draw($("#thumb-canvas"), THUMB, "yt"); draw($("#thumb-mini"), THUMB, "yt"); });
+  }
+  $("#thumb-to-editor").addEventListener("click", function () {
+    state.slides.push(clone(THUMB)); current = state.slides.length - 1; state.format = "yt";
+    persist(); renderStrip(); fillInspector(); show("editor");
+  });
+
+  window.addEventListener("resize", sizeCanvas);
+
+  // ---------- start ----------
+  Promise.all([DH.ready(), DH.loadImage("wordmark.png").then(function (i) { wordmark = i; })])
+    .then(function () { return Promise.all(state.slides.map(function (sl) { return getImage(sl.photo); })); })
+    .then(function () {
+      renderStrip(); fillInspector(); redraw();
+      var h = (location.hash || "").replace("#", "");
+      if (h && h !== "editor" && document.getElementById("view-" + h)) show(h);
+    });
+
+  if (window.claude && window.claude.use) {
+    window.claude.use("downloads").then(function (d) { downloads = d; }).catch(function () { downloads = null; });
+  }
+})();
 </script>

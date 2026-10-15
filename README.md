@@ -14,18 +14,24 @@ Hlavní instrukce (system prompt, brand, tone of voice) jsou v [`CLAUDE.md`](CLA
 | `/post` | Carousel / single post + caption | `/post 5 největších přestupů extraligy, 7 slajdů` |
 | `/napady` | Virální nápady na videa | `/napady NHL zákulisí, 10` |
 
-## Live preview a export grafiky
+## Deník Hokeje Studio (aplikace)
 
-- `studio/index.html` – live preview všech modulů (otevři v prohlížeči).
-- Export slajdů do PNG v plném rozlišení:
+Editor postů ve stylu kanálu: nahraješ fotku, napíšeš text (`*slovo*` = červeně), posuneš výřez a stáhneš PNG nebo celý carousel jako ZIP.
 
-  ```bash
-  npm install        # jen poprvé
-  npm run render     # ukázka Nagano 1998 → output/posty/2026-10-15-nagano-1998/
-  node tools/render.mjs studio/<post>.html output/posty/<slozka>
-  ```
+```bash
+npm run studio     # pak otevři http://localhost:8000
+```
 
-Formáty: Instagram a Facebook 1080 × 1350, TikTok 1080 × 1920, YouTube 1280 × 720.
+## Export postů z Claude Code
+
+```bash
+npm install                                             # jen poprvé
+node tools/render-post.mjs output/posty/<slozka>/post.json
+npm run render                                          # ukázka MS 2010
+```
+
+Šablony: `titulek` (fotka + červený přechod + nadpis s podtržením) a `slovnicek` (fotka + pojem + vysvětlení).
+Formáty: `ig` Instagram a Facebook 1080 × 1350, `tt` TikTok 1080 × 1920, `yt` YouTube 1280 × 720.
 
 ## Jak naučit engine váš styl
 

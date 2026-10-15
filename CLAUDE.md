@@ -11,39 +11,38 @@ Komunikuj vždy česky (pokud uživatel výslovně nechce jinak).
 Všechny vizuální i textové výstupy musí striktně odpovídat identitě kanálu **Deník Hokeje**:
 
 * **Projekt:** Deník Hokeje (sportovní hokejový obsah, analýzy, příběhy hráčů, rivality, zákulisí NHL, Tipsport Extraligy a reprezentace).
-* **Logo:** vždy použij logo kanálu → `assets/logo/denik-hokeje-logo.png` (plné rozlišení 1080×1080, průhledné pozadí), `assets/logo/denik-hokeje-logo.webp` (originál), `assets/logo/denik-hokeje-logo-256.png` (malá verze pro rohy postů / watermark).
-  * Popis loga: kruhový odznak, tmavě červený podklad s panoramatem Pražského hradu a střech Malé Strany, uprostřed černá písmena **„DH"**, mezi nimi silueta hokejisty s holí, tenký černý vnitřní prstenec.
-  * Logo nikdy nedeformuj, nepřebarvuj ani neořezávej kruh. Na tmavém pozadí ho umísti s jemným vnějším stínem nebo tenkým bílým/červeným okrajem, aby se neztratilo.
-* **Barevná paleta & vzhled:**
+* **Vizuální styl postů** je převzatý z reálných postů kanálu v `reference/posty/` (popis v `reference/posty/README.md`). Je závazný a kopíruj ho do detailu.
+* **Logo:**
+  * **Nápis DENÍK HOKEJE** (dva řádky, v „K“ vyříznutá silueta hokejisty) → `assets/logo/denik-hokeje-wordmark-black.png`, `assets/logo/denik-hokeje-wordmark-white.png`, ve studiu `studio/wordmark.png` (bílá maska, renderer ji přebarví). Na postech a thumbnailech vlevo nahoře, cca 150 px široký, tmavý `#181818`, na tmavé fotce bílý, výjimečně zlatý `#C9A44C`.
+  * **Kulaté logo** (červený odznak s Pražským hradem a „DH") → `assets/logo/denik-hokeje-logo.png` / `.webp` / `-256.png`. Jen profilovka, závěr videa a watermark ve videu. Nikdy ho nedeformuj, nepřebarvuj ani neořezávej.
+* **Barvy:**
 
-  | Role | Barva | HEX |
-  |---|---|---|
-  | Pozadí (dark mode) | Hokejová černá | `#0A0A0C` |
-  | Pozadí sekundární | Temně modrá (noční led) | `#0B1A2E` |
-  | Text / led | Ledově bílá | `#F2F6FA` |
-  | Brand akcent (z loga) | Deník červená | `#A41E1E` |
-  | Brand akcent tmavý | Bordó | `#870709` |
-  | Agresivní akcent | Signální červená | `#E10600` |
-  | Kontrastní akcent | Neonově žlutá | `#F5E400` |
+  | Role | HEX |
+  |---|---|
+  | Deník červená (zvýrazněná slova, akcenty) | `#FE0000` |
+  | Černá (spodek titulku, text na ledu) | `#000000` |
+  | Bílá (text) | `#FFFFFF` |
+  | Červený přechod přes fotku | multiply + `rgba(200,0,0,…)` zleva shora |
+  | Logo tmavé / zlaté | `#181818` / `#C9A44C` |
 
-  * Dark mode / hokejová atmosféra: temně modrá, černá, akcenty ledově bílé, agresivní červené nebo neonově žluté pro maximální kontrast.
-  * V jednom výstupu používej max. **jeden** agresivní akcent (červená NEBO žlutá), ne oba naráz.
-    * **Posty a carousely:** signální červená `#E10600`.
-    * **Thumbnaily:** neonově žlutá `#F5E400`, když je fotka sama plná červené (dresy, světla); jinak červená.
-  * **Typografie** (lokálně v `studio/fonts/`, všechny s českou diakritikou):
-    * Titulky: **Bebas Neue**, verzálky.
-    * Štítky, popisky, čísla: **Barlow Condensed** 600/800, verzálky s prostrkáním.
-    * Běžný text: **Barlow** 400–600.
+* **Typografie** (lokálně ve `studio/fonts/`, Google Fonts, plná česká diakritika):
+  * Nadpis s podtržením („MS 1947"): **Montserrat ExtraBold 800**, bílý, pod ním ručně tažená bílá linka.
+  * Hlavní text titulku: **Roboto Bold 700**, bílý, klíčová slova `#FE0000`.
+  * Pojem ve slovníčku: **Gelasio Bold** (patkové, jako Georgia), malými písmeny.
+  * Vysvětlení ve slovníčku: **Open Sans 400**, drobné.
+* **Šablony postů** (`studio/post-renderer.js`):
+  * `titulek` – fotka, červený přechod zleva shora, černý spodek, nadpis s podtržením + 2–3 řádky textu, 2–4 slova červeně (`*slovo*`).
+  * `slovnicek` – fotka bez překryvu, pojem patkovým písmem + drobné vysvětlení, barva textu podle fotky.
 * **Formáty a sítě:** Deník Hokeje publikuje na **Instagramu, Facebooku a TikToku** + YouTube.
 
-  | Kanál | Formát | Rozměr | Třída ve studiu |
-  |---|---|---|---|
-  | Instagram carousel / post | 4:5 | 1080 × 1350 | `.slide--ig` |
-  | Facebook post / carousel | 4:5 (stejné slajdy jako IG) | 1080 × 1350 | `.slide--ig` |
-  | TikTok foto-carousel | 9:16 | 1080 × 1920 | `.slide--tt` |
-  | YouTube thumbnail | 16:9 | 1280 × 720 | `.slide--yt` |
+  | Kanál | Rozměr | `format` |
+  |---|---|---|
+  | Instagram + Facebook (stejné slajdy) | 1080 × 1350 (4:5) | `ig` |
+  | TikTok foto-carousel | 1080 × 1920 (9:16) | `tt` |
+  | YouTube thumbnail | 1280 × 720 (16:9) | `yt` |
 
-  * TikTok: text drž mimo zakryté zóny – horních ~130 px, spodních ~400 px (popisek), pravých ~120 px (tlačítka).
+  * TikTok: text drž mimo zakryté zóny – horních ~130 px, spodních ~400 px (popisek), pravých ~120 px (tlačítka). Renderer to u `tt` dělá sám.
+* **Fotky:** vždy skutečné fotky (vlastní, agenturní s licencí, nebo volné z Wikimedia Commons s uvedením autora). U CC BY fotek patří autor a licence do captionu.
 * **STRIKTNÍ ZÁKAZ „AI LOOKU":** žádné přemrštěné AI efekty, nepřirozené plastové obličeje ani nerealistická světla. Vše musí vypadat jako profesionální práce grafické redakce sportovních médií (Bleacher Report, ESPN, NHL).
 
 ---
@@ -77,7 +76,7 @@ Všechny vizuální i textové výstupy musí striktně odpovídat identitě kan
   * **Poslední slajd:** výzva k akci (Komentář / Uložení / Odběr) s logem Deník Hokeje.
 * **Caption:** kompletní text k příspěvku včetně chytlavého prvního řádku, otázky pro komunitu a hashtagů.
 * Šablona: `templates/carousel.md`. Výstup do `output/posty/`.
-* **Grafika:** slajdy se stavějí jako HTML ve `studio/` z komponent v `studio/brand.css` (vzor: `studio/index.html`) a exportují do PNG příkazem `node tools/render.mjs <soubor.html> <výstupní složka>`.
+* **Grafika:** každý post je `output/posty/RRRR-MM-DD-slug/post.json` (šablona, fotka, texty, výřez) a PNG z něj vyrobí `node tools/render-post.mjs output/posty/RRRR-MM-DD-slug/post.json`. Stejný vykreslovač používá aplikace **Deník Hokeje Studio** (`studio/index.html`), kde jde post upravit ručně a stáhnout.
 
 ### D) Virální analytik & Ideamaker → skill `/napady`
 * Neustálé vymýšlení virálních témat a konceptů (kontroverze, skryté příběhy, finanční pozadí, neznámé historické momenty, rivality).
@@ -113,8 +112,8 @@ reference/scenare/    referenční scénáře (styl, pacing, dramaturgie)
 reference/posty/      ukázkové posty a carousely (typografie, layout)
 reference/thumbnaily/ ukázkové náhledovky
 templates/            šablony výstupů pro jednotlivé moduly
-studio/               HTML grafika: brand.css (slide systém), fonty, live preview (index.html)
-tools/render.mjs      export slajdů do PNG (Playwright), `npm install` jednou předem
+studio/               aplikace Deník Hokeje Studio (index.html), vykreslovač postů (post-renderer.js), fonty, logo, ukázkové fotky
+tools/render-post.mjs export postů z post.json do PNG (Playwright), `npm install` jednou předem
 output/               hotové výstupy (scénáře, thumbnaily, posty, nápady)
 .claude/skills/       slash příkazy /scenar, /thumbnail, /post, /napady
 ```
